@@ -30,8 +30,22 @@ from demandforecast.decision import decision_metrics
 from demandforecast.inventory import inventory_evaluation
 from demandforecast.metrics import regression_metrics, score_predictions
 from demandforecast.paths import duckdb_path, reports_dir
-from demandforecast.plots import plot_decision_summary, plot_forecast_vs_actual, plot_wape_by_fold
+from demandforecast.plots import (
+    plot_decision_summary,
+    plot_forecast_vs_actual,
+    plot_order_wape_by_fold,
+    plot_wape_by_fold,
+)
+from demandforecast.refit import (
+    REFIT_EVALUATION,
+    REFIT_NOTE,
+    SLICE_EVALUATION,
+    SLICE_NOTE,
+    load_pre_cutoff_top_skus,
+    refit_predictions,
+)
 from demandforecast.reporting import headline_block, write_json, write_metrics_csv, write_metrics_md
+from demandforecast.robustness import build_robustness, refit_summary
 from demandforecast.schedule import origin_dates
 from demandforecast.segments import segment_metrics
 from demandforecast.weekly import run_weekly_backtest
@@ -39,6 +53,24 @@ from demandforecast.weekly import run_weekly_backtest
 
 def _log(message: str) -> None:
     print(message, flush=True)
+
+
+def _json_ready(value):
+    if isinstance(value, dict):
+        return {str(key): _json_ready(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_json_ready(item) for item in value]
+    if isinstance(value, np.ndarray):
+        return [_json_ready(item) for item in value.tolist()]
+    if isinstance(value, np.bool_):
+        return bool(value)
+    if isinstance(value, np.integer):
+        return int(value)
+    if isinstance(value, np.floating):
+        return float(value)
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    return value
 
 
 def _load_tables() -> tuple[pd.DataFrame, pd.DataFrame, dict]:
@@ -283,6 +315,31 @@ def run_backtest(cfg: Config | None = None) -> dict:
     )
     weekly = run_weekly_backtest(cfg)
 
+    descriptions = {
+        str(row["sku"]): str(row.get("description") or "")
+        for row in build_stats.get("skus", [])
+    }
+    robustness, robust_tables = build_robustness(
+        preds,
+        histories,
+        cfg,
+        descriptions=descriptions,
+        cutoff=origins[0],
+    )
+    top = load_pre_cutoff_top_skus(cfg.top_refit_n)
+    top_skus = top["sku"].tolist()
+    _log(f"Refit on {len(top_skus)} pre-cutoff SKUs")
+    refit_preds = refit_predictions(supervised, histories, origins, cfg, top_skus)
+    refit_models = ["moving_average_28", "lightgbm_l1", "lightgbm_tweedie"]
+    refit_decision = decision_metrics(refit_preds, refit_models)
+    refit_decision.insert(0, "evaluation", REFIT_EVALUATION)
+    refit_decision.insert(1, "note", REFIT_NOTE)
+    slice_preds = preds.loc[preds["sku"].astype(str).isin(top_skus)].copy()
+    slice_decision = decision_metrics(slice_preds, refit_models)
+    slice_decision.insert(0, "evaluation", SLICE_EVALUATION)
+    slice_decision.insert(1, "note", SLICE_NOTE)
+    robustness["refit"] = refit_summary(refit_decision, slice_decision, top_skus)
+
     paragraphs, summary = headline_block(
         metrics,
         decision,
@@ -291,6 +348,7 @@ def run_backtest(cfg: Config | None = None) -> dict:
         weekly_decision=weekly["decision"],
         weekly_folds=weekly["n_folds"],
         weekly_horizon=cfg.weekly_horizon,
+        robustness=robustness,
     )
     for paragraph in paragraphs:
         _log(paragraph)
@@ -315,6 +373,17 @@ def run_backtest(cfg: Config | None = None) -> dict:
     inventory_detail.to_csv(reports / "inventory_by_sku_origin.csv", index=False)
     inventory_summary.to_csv(reports / "inventory_summary.csv", index=False)
     importance.to_csv(reports / "feature_importance.csv", index=False)
+    robust_tables["order_wape_by_fold"].to_csv(reports / "order_wape_by_fold.csv", index=False)
+    robust_tables["sku_origin_contribution"].to_csv(reports / "sku_origin_contribution.csv", index=False)
+    robust_tables["sku_origin_activity"].to_csv(reports / "sku_origin_activity.csv", index=False)
+    robust_tables["active_window_metrics"].to_csv(reports / "active_window_metrics.csv", index=False)
+    robust_tables["horizon_cut_metrics"].to_csv(reports / "horizon_cut_metrics.csv", index=False)
+    robust_tables["quiet_skus"].to_csv(reports / "quiet_skus.csv", index=False)
+    pd.DataFrame([robustness["interval"]]).to_csv(reports / "origin_cluster_interval.csv", index=False)
+    top.to_csv(reports / "top20_pre_cutoff_skus.csv", index=False)
+    refit_preds.to_csv(reports / "top20_refit_predictions.csv", index=False)
+    refit_decision.to_csv(reports / "top20_refit_decision_metrics.csv", index=False)
+    slice_decision.to_csv(reports / "top20_slice_decision_metrics.csv", index=False)
 
     last = preds.loc[preds["fold"] == int(preds["fold"].max())].copy()
     daily = last.groupby("target_date", as_index=False)[
@@ -327,6 +396,7 @@ def run_backtest(cfg: Config | None = None) -> dict:
         f"Last window (origin {origin_label}): sum of {last['sku'].nunique()} SKUs",
     )
     plot_wape_by_fold(metrics, reports / "wape_by_fold.png")
+    plot_order_wape_by_fold(robust_tables["order_wape_by_fold"], reports / "order_wape_by_fold.png")
     plot_decision_summary(decision, reports / "bias.png")
     write_analysis(
         reports / "analysis.md",
@@ -338,6 +408,11 @@ def run_backtest(cfg: Config | None = None) -> dict:
         inventory_detail=inventory_detail,
         weekly_decision=weekly["decision"],
         build_stats=build_stats,
+        robustness_notes=paragraphs[:8],
+        horizon=robust_tables["horizon_cut_metrics"],
+        active=robust_tables["active_window_metrics"],
+        refit_decision=refit_decision,
+        slice_decision=slice_decision,
     )
 
     elapsed = time.perf_counter() - started
@@ -356,7 +431,7 @@ def run_backtest(cfg: Config | None = None) -> dict:
         "folds": fold_info,
         "feature_importance_mean_gain": importance.to_dict(orient="records"),
         "inventory_summary": inventory_summary.to_dict(orient="records"),
-        **summary,
+        **_json_ready(summary),
     }
     write_json(metadata, reports / "run_metadata.json")
     _log(f"Wrote reports to {reports} in {elapsed:.1f}s")

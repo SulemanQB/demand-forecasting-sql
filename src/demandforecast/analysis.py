@@ -19,6 +19,11 @@ def write_analysis(
     inventory_detail: pd.DataFrame,
     weekly_decision: pd.DataFrame,
     build_stats: dict,
+    robustness_notes: list[str] | None = None,
+    horizon: pd.DataFrame | None = None,
+    active: pd.DataFrame | None = None,
+    refit_decision: pd.DataFrame | None = None,
+    slice_decision: pd.DataFrame | None = None,
 ) -> str:
     text = _render(
         decision=decision,
@@ -29,6 +34,11 @@ def write_analysis(
         inventory_detail=inventory_detail,
         weekly_decision=weekly_decision,
         build_stats=build_stats,
+        robustness_notes=robustness_notes,
+        horizon=horizon,
+        active=active,
+        refit_decision=refit_decision,
+        slice_decision=slice_decision,
     )
     path.write_text(text, encoding="utf-8")
     return text
@@ -44,6 +54,11 @@ def _render(
     inventory_detail: pd.DataFrame,
     weekly_decision: pd.DataFrame,
     build_stats: dict,
+    robustness_notes: list[str] | None = None,
+    horizon: pd.DataFrame | None = None,
+    active: pd.DataFrame | None = None,
+    refit_decision: pd.DataFrame | None = None,
+    slice_decision: pd.DataFrame | None = None,
 ) -> str:
     order = decision.loc[decision["grain"] == "order_total"].set_index("model")
     winner = str(order["wape"].idxmin())
@@ -57,11 +72,46 @@ def _render(
         "Volume quartiles are computed from backtest actuals and are not model features. "
         "Demand class uses only history through the origin, starting at the first positive day.",
         "",
-        f"The lowest order-quantity WAPE is the {MODEL_LABELS[winner]} at "
-        f"{float(order.loc[winner, 'wape']):.6f} "
-        f"(bias {float(order.loc[winner, 'bias']):+.6f}, "
-        f"{int(order.loc[winner, 'n_points'])} SKU-origins).",
-        "",
+    ]
+    if robustness_notes:
+        lines.extend([robustness_notes[0], ""])
+        lines.extend(["## Order-quantity uncertainty and labeled cuts", ""])
+        for note in robustness_notes[1:]:
+            lines.extend([note, ""])
+    else:
+        lines.extend(
+            [
+                f"The lowest order-quantity WAPE is the {MODEL_LABELS[winner]} at "
+                f"{float(order.loc[winner, 'wape']):.6f} "
+                f"(bias {float(order.loc[winner, 'bias']):+.6f}, "
+                f"{int(order.loc[winner, 'n_points'])} SKU-origins).",
+                "",
+            ]
+        )
+    if horizon is not None and not horizon.empty:
+        lines.extend(["Horizon cuts (order quantity):", "", _horizon_table(horizon), ""])
+    if active is not None and not active.empty:
+        lines.extend(
+            [
+                "Active-in-window slice (order quantity):",
+                "",
+                _decision_table(active.loc[active["grain"] == "order_total"]),
+                "",
+            ]
+        )
+    if refit_decision is not None and slice_decision is not None:
+        lines.extend(
+            [
+                "Pre-cutoff top-SKU refit, then the same SKUs sliced from the top-40 model:",
+                "",
+                _labeled_decision_table(refit_decision),
+                "",
+                _labeled_decision_table(slice_decision),
+                "",
+            ]
+        )
+    lines.extend(
+        [
         "## Order quantity, bias, and the daily aggregate",
         "",
         _decision_table(decision),
@@ -88,7 +138,8 @@ def _render(
         "Croston, SBA, and TSB use alpha 0.1, are flat across the horizon, and are not included in the all-SKU WAPE. "
         "Croston and SBA do not update on trailing zeros. TSB updates the demand probability every period after the first demand.",
         "",
-    ]
+        ]
+    )
     if lumpy is None or lumpy.empty:
         lines.append("No SKU-origin was classed as lumpy.")
     else:
@@ -121,11 +172,32 @@ def _render(
             "",
             _sample_paragraph(build_stats, quality),
             "",
-            "Charts: `bias.png` (bias by grain, and order-quantity WAPE), `forecast_vs_actual.png`, `wape_by_fold.png`.",
+            "Charts: `order_wape_by_fold.png` (28-day order-quantity WAPE by origin), "
+            "`bias.png` (bias by grain, and order-quantity WAPE), `forecast_vs_actual.png`, `wape_by_fold.png`.",
             "",
         ]
     )
     return "\n".join(lines)
+
+
+def _horizon_table(horizon: pd.DataFrame) -> str:
+    header = "| days | evaluation | model | points | WAPE | bias |"
+    rule = "| --- | --- | --- | --- | --- | --- |"
+    body = []
+    for row in horizon.itertuples(index=False):
+        body.append(
+            f"| {int(row.h_min)}-{int(row.h_max)} | {row.evaluation} | "
+            f"{MODEL_LABELS.get(row.model, str(row.model))} | {int(row.n_points)} | "
+            f"{row.wape:.6f} | {row.bias:+.6f} |"
+        )
+    return "\n".join([header, rule, *body])
+
+
+def _labeled_decision_table(decision: pd.DataFrame) -> str:
+    order = decision.loc[decision["grain"] == "order_total"]
+    label = str(order["evaluation"].iloc[0]) if "evaluation" in order.columns else ""
+    note = str(order["note"].iloc[0]) if "note" in order.columns else ""
+    return f"{label}. {note}\n\n" + _decision_table(order)
 
 
 def _decision_table(decision: pd.DataFrame) -> str:

@@ -89,6 +89,39 @@ def plot_wape_by_fold(metrics: pd.DataFrame, path: Path) -> None:
     plt.close(fig)
 
 
+def plot_order_wape_by_fold(by_origin: pd.DataFrame, path: Path) -> None:
+    """28-day order-quantity WAPE at each origin."""
+    models = ["moving_average_28", "lightgbm_l1", "lightgbm_tweedie"]
+    colors = {
+        "moving_average_28": "#8a8f98",
+        "lightgbm_l1": "#9bb4c8",
+        "lightgbm_tweedie": "#1f4e79",
+    }
+    origins = list(dict.fromkeys(by_origin["origin_date"].tolist()))
+    fig, ax = plt.subplots(figsize=(8.6, 4.3))
+    x = range(len(origins))
+    width = 0.25
+    for i, model in enumerate(models):
+        part = by_origin.loc[by_origin["model"] == model].set_index("origin_date").loc[origins]
+        offset = (i - 1) * width
+        ax.bar(
+            [v + offset for v in x],
+            part["wape"],
+            width=width,
+            color=colors[model],
+            label=MODEL_LABELS[model],
+        )
+    ax.set_xticks(list(x))
+    ax.set_xticklabels(origins, rotation=45, ha="right")
+    ax.set_ylabel("WAPE")
+    ax.set_title("28-day order-quantity WAPE by origin")
+    ax.legend(frameon=False)
+    ax.grid(axis="y", color="#e6e6e6")
+    fig.tight_layout()
+    fig.savefig(path, dpi=120, bbox_inches="tight")
+    plt.close(fig)
+
+
 def plot_decision_summary(decision: pd.DataFrame, path: Path) -> None:
     """Bias at the daily and order grains, and order-quantity WAPE."""
     models = [name for name in DAILY_MODELS if name in set(decision["model"])]

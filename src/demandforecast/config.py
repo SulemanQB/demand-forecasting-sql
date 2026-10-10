@@ -133,7 +133,7 @@ class Config:
     lgb_bagging_fraction: float = 0.8
     lgb_lambda_l2: float = 1.0
     seed: int = 42
-    # Compound Poisson-gamma default. Not searched on the test window.
+    # Library default. The Tweedie objective was chosen after an earlier L1 run; this power was not searched.
     tweedie_variance_power: float = 1.5
     # Shared smoothing constant for Croston, SBA, and both TSB updates.
     croston_alpha: float = 0.1
@@ -148,3 +148,9 @@ class Config:
     weekly_warmup_weeks: int = 8
     weekly_min_history: int = 5
     weekly_ma_window: int = 4
+    # Origin-cluster interval for the order-quantity WAPE gap. Fixed evaluation settings.
+    bootstrap_draws: int = 10000
+    # A SKU-origin is active when it has a sale in (origin - window, origin]. Not a model feature.
+    active_window_days: int = 90
+    # Second LightGBM fit on this many pre-cutoff SKUs. Not a filter of the top-40 fit.
+    top_refit_n: int = 20
