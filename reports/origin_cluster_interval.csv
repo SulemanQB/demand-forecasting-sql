@@ -1,0 +1,2 @@
+statistic,model,baseline,n_origins,n_draws,seed,point,ci_low,ci_high,share_draws_negative,includes_zero,method
+order_wape_model_minus_baseline,lightgbm_tweedie,moving_average_28,10,10000,42,-0.04086645452405663,-0.09027434231010835,0.009448963761033387,0.9447,True,origin_cluster_percentile_linear

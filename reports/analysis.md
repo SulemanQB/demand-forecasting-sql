@@ -2,7 +2,72 @@
 
 This note is written from the CSV files in `reports/`. The replenishment comparison is the 28-day total for one SKU at one origin. Daily WAPE is reported beside it as a shape score. Volume quartiles are computed from backtest actuals and are not model features. Demand class uses only history through the origin, starting at the first positive day.
 
-The lowest order-quantity WAPE is the LightGBM Tweedie at 0.355129 (bias -0.063205, 400 SKU-origins).
+At the 28-day order quantity (400 SKU-origins across 10 origins), LightGBM Tweedie WAPE was 0.355129 (bias -0.063205), 10.32% lower than the 28-day moving average (WAPE 0.395996); an origin-cluster 95% interval for the WAPE gap (Tweedie minus the moving average) is [-0.090274, +0.009449] and includes zero; Tweedie was lower on 6 of 10 origins.
+
+## Order-quantity uncertainty and labeled cuts
+
+The largest SKU-origin share of the net absolute-error reduction versus the moving average was SKU 22197 at origin 2011-06-14 (20.75% of the net; actual 1626, Tweedie 1828.21, moving average 6175.00).
+
+LightGBM L1, fit on absolute error, had order-quantity WAPE 0.522505 (bias -0.485450).
+
+Dropping SKU-origins with no sale in the 90 days before the origin (dates after origin minus 90 days, through the origin), without refitting, leaves 391 of 400 SKU-origins. On that slice, order-quantity WAPE was 0.353240 for Tweedie (bias -0.065094) and 0.395996 for the moving average, 10.80% lower for Tweedie.
+
+Horizon cuts are partial sums of the fitted 28-day forecasts, not refits. days 1-7: Tweedie WAPE 0.571241 is 0.70% higher than the moving average (WAPE 0.567251); days 1-14: Tweedie WAPE 0.437721 is 5.23% lower than the moving average (WAPE 0.461885).
+
+In Q1, the lowest backtest-volume quartile (descriptive, not a feature; 49108 units, mean order 491.08), order-quantity WAPE was 0.561226 for Tweedie (bias +0.332390), 0.553820 for the moving average (bias +0.024864), and 0.433232 for L1 (bias -0.273265). Tweedie was above the 28-day actual on 77 of 100 SKU-origins, against 42 of 100 for the moving average.
+
+SKU 84270 (ASSTD DESIGN BUBBLE GUM RING) has actual 0 on all 10 scored origins. The last positive day in the panel is 2010-12-06, and it sold 20866 units before the first origin. The moving average forecasts 0.00 units in total; Tweedie forecasts 1240.10. Its share of the net absolute-error reduction versus the moving average is -5.92%. A negative share increases Tweedie's absolute error.
+
+LightGBM refit on the SKUs with the most units before the first origin. Not a slice of the top-40 model. On this 20-SKU refit, order-quantity WAPE was 0.373500 for Tweedie (bias -0.104242) and 0.396441 for the moving average (5.79% lower for Tweedie), across 200 SKU-origins. Same SKUs scored from the top-40 model. The model was not refit. That slice has Tweedie WAPE 0.357125 and moving-average WAPE 0.396441 (9.92% lower for Tweedie). The refit assortment includes 84270, which has no sales in the scored window.
+
+Horizon cuts (order quantity):
+
+| days | evaluation | model | points | WAPE | bias |
+| --- | --- | --- | --- | --- | --- |
+| 1-7 | partial_sum_not_a_refit | 28-day moving average | 400 | 0.567251 | -0.098285 |
+| 1-7 | partial_sum_not_a_refit | LightGBM L1 | 400 | 0.607465 | -0.501729 |
+| 1-7 | partial_sum_not_a_refit | LightGBM Tweedie | 400 | 0.571241 | -0.063422 |
+| 8-14 | partial_sum_not_a_refit | 28-day moving average | 400 | 0.583832 | -0.048655 |
+| 8-14 | partial_sum_not_a_refit | LightGBM L1 | 400 | 0.610325 | -0.492410 |
+| 8-14 | partial_sum_not_a_refit | LightGBM Tweedie | 400 | 0.544067 | -0.075710 |
+| 15-21 | partial_sum_not_a_refit | 28-day moving average | 400 | 0.570639 | +0.103803 |
+| 15-21 | partial_sum_not_a_refit | LightGBM L1 | 400 | 0.536636 | -0.404182 |
+| 15-21 | partial_sum_not_a_refit | LightGBM Tweedie | 400 | 0.521451 | +0.054101 |
+| 22-28 | partial_sum_not_a_refit | 28-day moving average | 400 | 0.591624 | -0.127007 |
+| 22-28 | partial_sum_not_a_refit | LightGBM L1 | 400 | 0.615523 | -0.527577 |
+| 22-28 | partial_sum_not_a_refit | LightGBM Tweedie | 400 | 0.565939 | -0.144299 |
+| 1-14 | partial_sum_not_a_refit | 28-day moving average | 400 | 0.461885 | -0.074135 |
+| 1-14 | partial_sum_not_a_refit | LightGBM L1 | 400 | 0.559207 | -0.497194 |
+| 1-14 | partial_sum_not_a_refit | LightGBM Tweedie | 400 | 0.437721 | -0.069401 |
+| 1-28 | partial_sum_not_a_refit | 28-day moving average | 400 | 0.395996 | -0.050239 |
+| 1-28 | partial_sum_not_a_refit | LightGBM L1 | 400 | 0.522505 | -0.485450 |
+| 1-28 | partial_sum_not_a_refit | LightGBM Tweedie | 400 | 0.355129 | -0.063205 |
+
+Active-in-window slice (order quantity):
+
+| grain | model | points | WAPE | bias |
+| --- | --- | --- | --- | --- |
+| order_total | 28-day moving average | 391 | 0.395996 | -0.050239 |
+| order_total | LightGBM L1 | 391 | 0.520769 | -0.487186 |
+| order_total | LightGBM Tweedie | 391 | 0.353240 | -0.065094 |
+
+Pre-cutoff top-SKU refit, then the same SKUs sliced from the top-40 model:
+
+refit_pre_cutoff_top_n. LightGBM refit on the SKUs with the most units before the first origin. Not a slice of the top-40 model.
+
+| grain | model | points | WAPE | bias |
+| --- | --- | --- | --- | --- |
+| order_total | 28-day moving average | 200 | 0.396441 | -0.055483 |
+| order_total | LightGBM L1 | 200 | 0.514967 | -0.473191 |
+| order_total | LightGBM Tweedie | 200 | 0.373500 | -0.104242 |
+
+slice_of_top40_not_a_refit. Same SKUs scored from the top-40 model. The model was not refit.
+
+| grain | model | points | WAPE | bias |
+| --- | --- | --- | --- | --- |
+| order_total | 28-day moving average | 200 | 0.396441 | -0.055483 |
+| order_total | LightGBM L1 | 200 | 0.540741 | -0.511510 |
+| order_total | LightGBM Tweedie | 200 | 0.357125 | -0.090894 |
 
 ## Order quantity, bias, and the daily aggregate
 
@@ -141,4 +206,4 @@ The SKU-origin table is `inventory_by_sku_origin.csv`. L1 is the absolute-error 
 
 Selection cutoff 2011-02-22, which is the first daily origin. Ranks use dates strictly before that day. 40 SKUs were taken from 430 with at least 180 sale days in the window. They are 17.96% of units before the cutoff and, as a descriptive full-period share only, 16.49% of cleaned units from 2009-12-01 to 2011-12-09. Examples: 85123A WHITE HANGING HEART T-LIGHT HOLDER (60,447 units before the cutoff, 360 sale days); 84077 WORLD WAR 2 GLIDERS ASSTD DESIGNS (56,976 units before the cutoff, 263 sale days); 21212 PACK OF 72 RETROSPOT CAKE CASES (51,436 units before the cutoff, 348 sale days). Cancellation matches: 3670 (sales lines 935027, clean lines 931357). Clean quantity 8950843 equals daily units 8950843. Panel rows 29560 and distinct keys 29560. Supervised rows with as-of on or after the target: 0. Weekly versus daily unit mismatches: 0.
 
-Charts: `bias.png` (bias by grain, and order-quantity WAPE), `forecast_vs_actual.png`, `wape_by_fold.png`.
+Charts: `order_wape_by_fold.png` (28-day order-quantity WAPE by origin), `bias.png` (bias by grain, and order-quantity WAPE), `forecast_vs_actual.png`, `wape_by_fold.png`.

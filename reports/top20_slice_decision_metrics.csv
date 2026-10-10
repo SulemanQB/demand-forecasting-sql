@@ -1,0 +1,10 @@
+evaluation,note,grain,model,n_points,mae,rmse,wape,smape,bias
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,daily,moving_average_28,5600,60.85656887755103,165.15329339397852,1.0442645670284012,1.1103233590361161,-0.055483206731402696
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,order_total,moving_average_28,200,646.895,1080.5781207298248,0.39644125496781074,0.42032780793425006,-0.055483206731402696
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,daily_aggregate,moving_average_28,280,730.9181122448979,1080.8486776744523,0.627107229420383,0.720688988557674,-0.05548320673140267
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,daily,lightgbm_l1,5600,47.56927517934898,166.61263089162085,0.8162620644776767,1.1979414186819193,-0.5115103682552006
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,order_total,lightgbm_l1,200,882.3575691202245,1466.0147838353969,0.5407414526814531,0.6898963444220944,-0.5115103682552006
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,daily_aggregate,lightgbm_l1,280,666.0801026677757,1132.9248943732562,0.5714780366751663,0.8415521625142164,-0.5115103682552006
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,daily,lightgbm_tweedie,5600,53.232124590756335,160.47905836619617,0.9134333821812572,1.2032094829957187,-0.09089432177707202
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,order_total,lightgbm_tweedie,200,582.7409190906785,986.8467924680835,0.3571252541531532,0.455597600654292,-0.090894321777072
+slice_of_top40_not_a_refit,Same SKUs scored from the top-40 model. The model was not refit.,daily_aggregate,lightgbm_tweedie,280,524.6614351714255,907.2124999791355,0.45014478842718164,0.6910447725521343,-0.09089432177707202

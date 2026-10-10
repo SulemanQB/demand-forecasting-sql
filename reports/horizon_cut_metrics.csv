@@ -1,0 +1,19 @@
+h_min,h_max,evaluation,note,grain,model,n_points,mae,rmse,wape,smape,bias
+1,7,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,moving_average_28,400,191.37625,338.18918152418775,0.5672508336420896,0.5602321248826861,-0.09828454983327158
+1,7,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_l1,400,204.943438868197,400.8930136448746,0.6074648058338555,0.680790991082965,-0.5017290568147954
+1,7,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_tweedie,400,192.72257540054775,335.95571760878335,0.5712414239364142,0.6197087883638369,-0.06342173608721433
+8,14,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,moving_average_28,400,186.695,377.17207777087634,0.5838323821436948,0.5624400122133103,-0.048655304510984286
+8,14,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_l1,400,195.16673731544878,429.16424672219796,0.6103251890092996,0.6821707551605966,-0.49240976108963985
+8,14,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_tweedie,400,173.978911084964,360.6662577429665,0.5440666439995747,0.5942645987806193,-0.07570962284111069
+15,21,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,moving_average_28,400,157.2725,233.36007049193313,0.5706394056765509,0.5850445686019086,0.10380250900283919
+15,21,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_l1,400,147.90087467661832,262.5011017910202,0.536635885005373,0.6289286150147756,-0.4041824884086843
+15,21,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_tweedie,400,143.7158146488548,217.7672243631153,0.5214510296303794,0.6023926867440429,0.054101447736761565
+22,28,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,moving_average_28,400,206.16625,428.2742433301354,0.5916242198149078,0.5667095978046565,-0.12700695889231653
+22,28,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_l1,400,214.4942071053525,470.18157953074956,0.6155225112428511,0.6739529539638908,-0.5275774900299435
+22,28,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_tweedie,400,197.2157582353589,413.5310228825728,0.5659394740952978,0.6131550030818929,-0.14429913370053327
+1,14,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,moving_average_28,400,303.5275,533.1461267795162,0.46188465342768015,0.46352065245861906,-0.07413452027695351
+1,14,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_l1,400,367.4831413906988,678.9744856149821,0.5592073976880451,0.6404922131160435,-0.4971942051211004
+1,14,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_tweedie,400,287.6483955330888,509.20538959160285,0.4377210614518584,0.4880751453514269,-0.06940113042142602
+1,28,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,moving_average_28,400,507.3625,849.097684309644,0.395995652623548,0.41320285533559614,-0.05023873496808737
+1,28,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_l1,400,669.4504273594182,1131.8132028970083,0.5225050311785084,0.6211412280134455,-0.4854501137831051
+1,28,partial_sum_not_a_refit,Partial sum of the fitted 28-day forecast. Not a refit.,order_total,lightgbm_tweedie,400,455.0030703040067,765.4101398293076,0.35512919809949145,0.41296207976137567,-0.06320541253490207

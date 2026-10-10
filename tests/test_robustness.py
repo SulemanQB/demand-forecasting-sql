@@ -243,7 +243,7 @@ def test_committed_robustness_matches_predictions():
     slice_got = decision_metrics(slice_preds, ["moving_average_28", "lightgbm_l1", "lightgbm_tweedie"])
     slice_check = slice_saved.merge(slice_got, on=["grain", "model"], suffixes=("_file", "_recomputed"))
     np.testing.assert_allclose(slice_check["wape_file"], slice_check["wape_recomputed"], rtol=1e-6, atol=1e-8)
-    assert "not a refit" in slice_saved["note"].str.lower().iloc[0]
+    assert "not refit" in slice_saved["note"].str.lower().iloc[0]
     assert "slice" in slice_saved["evaluation"].iloc[0]
 
     lead = (reports / "headline.txt").read_text(encoding="utf-8").splitlines()[0]

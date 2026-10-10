@@ -1,0 +1,2 @@
+sku,description,n_origins,actual_units,last_positive_date,units_before_cutoff,share_of_net_ae_reduction,net_ae_reduction,forecast_moving_average_28,forecast_lightgbm_l1,forecast_lightgbm_tweedie
+84270,ASSTD DESIGN BUBBLE GUM RING,10,0.0,2010-12-06,20866.0,-0.059211099426947564,20943.77187839734,0.0,976.5434385441348,1240.1037590670935

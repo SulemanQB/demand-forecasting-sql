@@ -1,0 +1,21 @@
+rank,evaluation,note,sku,total_units,sale_days
+1,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,85123A,60447.0,360
+2,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84077,56976.0,263
+3,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,21212,51436.0,348
+4,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,85099B,50342.0,345
+5,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84879,45378.0,340
+6,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,22197,34631.0,321
+7,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84991,30017.0,342
+8,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,21977,28390.0,335
+9,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,21232,26579.0,346
+10,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,21982,26210.0,198
+11,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,21213,24301.0,320
+12,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,21980,23869.0,233
+13,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84755,22705.0,278
+14,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,15036,21194.0,239
+15,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,85099F,21135.0,338
+16,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84946,20882.0,318
+17,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84270,20866.0,209
+18,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,84992,19603.0,316
+19,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,20725,19396.0,354
+20,pre_cutoff_rank,Ranked by units on dates strictly before the first origin.,71459,19069.0,254

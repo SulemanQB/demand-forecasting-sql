@@ -29,7 +29,7 @@
     "2011-10-31"
   ],
   "weekly_n_folds": 10,
-  "elapsed_seconds": 43.164955440000085,
+  "elapsed_seconds": 66.8581192470001,
   "config": {
     "country": "United Kingdom",
     "top_n": 40,
@@ -61,7 +61,10 @@
     "weekly_season_year": 52,
     "weekly_warmup_weeks": 8,
     "weekly_min_history": 5,
-    "weekly_ma_window": 4
+    "weekly_ma_window": 4,
+    "bootstrap_draws": 10000,
+    "active_window_days": 90,
+    "top_refit_n": 20
   },
   "build": {
     "dataset_url": "https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip",
@@ -983,10 +986,16 @@
     "lightgbm_l1": 1.1773920800235838,
     "lightgbm_tweedie": 1.1901623596806836
   },
-  "headline": "At the 28-day order quantity (400 SKU-origins across 10 origins), the LightGBM Tweedie has the lowest WAPE, 0.355129, with bias -0.063205.",
+  "headline": "At the 28-day order quantity (400 SKU-origins across 10 origins), LightGBM Tweedie WAPE was 0.355129 (bias -0.063205), 10.32% lower than the 28-day moving average (WAPE 0.395996); an origin-cluster 95% interval for the WAPE gap (Tweedie minus the moving average) is [-0.090274, +0.009449] and includes zero; Tweedie was lower on 6 of 10 origins.",
   "paragraphs": [
-    "At the 28-day order quantity (400 SKU-origins across 10 origins), the LightGBM Tweedie has the lowest WAPE, 0.355129, with bias -0.063205.",
-    "LightGBM Tweedie order-quantity WAPE was 0.355129 (bias -0.063205): 10.32% lower than the 28-day moving average (WAPE 0.395996). LightGBM L1, fit on absolute error, had order-quantity WAPE 0.522505 (bias -0.485450).",
+    "At the 28-day order quantity (400 SKU-origins across 10 origins), LightGBM Tweedie WAPE was 0.355129 (bias -0.063205), 10.32% lower than the 28-day moving average (WAPE 0.395996); an origin-cluster 95% interval for the WAPE gap (Tweedie minus the moving average) is [-0.090274, +0.009449] and includes zero; Tweedie was lower on 6 of 10 origins.",
+    "The largest SKU-origin share of the net absolute-error reduction versus the moving average was SKU 22197 at origin 2011-06-14 (20.75% of the net; actual 1626, Tweedie 1828.21, moving average 6175.00).",
+    "LightGBM L1, fit on absolute error, had order-quantity WAPE 0.522505 (bias -0.485450).",
+    "Dropping SKU-origins with no sale in the 90 days before the origin (dates after origin minus 90 days, through the origin), without refitting, leaves 391 of 400 SKU-origins. On that slice, order-quantity WAPE was 0.353240 for Tweedie (bias -0.065094) and 0.395996 for the moving average, 10.80% lower for Tweedie.",
+    "Horizon cuts are partial sums of the fitted 28-day forecasts, not refits. days 1-7: Tweedie WAPE 0.571241 is 0.70% higher than the moving average (WAPE 0.567251); days 1-14: Tweedie WAPE 0.437721 is 5.23% lower than the moving average (WAPE 0.461885).",
+    "In Q1, the lowest backtest-volume quartile (descriptive, not a feature; 49108 units, mean order 491.08), order-quantity WAPE was 0.561226 for Tweedie (bias +0.332390), 0.553820 for the moving average (bias +0.024864), and 0.433232 for L1 (bias -0.273265). Tweedie was above the 28-day actual on 77 of 100 SKU-origins, against 42 of 100 for the moving average.",
+    "SKU 84270 (ASSTD DESIGN BUBBLE GUM RING) has actual 0 on all 10 scored origins. The last positive day in the panel is 2010-12-06, and it sold 20866 units before the first origin. The moving average forecasts 0.00 units in total; Tweedie forecasts 1240.10. Its share of the net absolute-error reduction versus the moving average is -5.92%. A negative share increases Tweedie's absolute error.",
+    "LightGBM refit on the SKUs with the most units before the first origin. Not a slice of the top-40 model. On this 20-SKU refit, order-quantity WAPE was 0.373500 for Tweedie (bias -0.104242) and 0.396441 for the moving average (5.79% lower for Tweedie), across 200 SKU-origins. Same SKUs scored from the top-40 model. The model was not refit. That slice has Tweedie WAPE 0.357125 and moving-average WAPE 0.396441 (9.92% lower for Tweedie). The refit assortment includes 84270, which has no sales in the scored window.",
     "Order-quantity bias, (forecast minus actual) / actual, was weekly seasonal naive +0.054680; yearly seasonal naive +0.342904; 28-day moving average -0.050239; LightGBM L1 -0.485450; LightGBM Tweedie -0.063205.",
     "Summing the assortment before scoring, daily aggregate WAPE was 0.568517 for the weekly seasonal naive; 0.725395 for the yearly seasonal naive; 0.588800 for the 28-day moving average; 0.537963 for the LightGBM L1; 0.393766 for the LightGBM Tweedie.",
     "On individual SKU-days, Tweedie WAPE was 0.933069 (bias -0.063205) and L1 WAPE was 0.824654 (bias -0.485450), against 1.053000 for the 28-day moving average and 1.276659 for the weekly seasonal naive. The daily score is a shape score; the order quantity above is the replenishment comparison.",
@@ -994,5 +1003,229 @@
     "Pooled daily MAE was 42.6956 for Tweedie, 37.7347 for L1, 48.1835 for the 28-day moving average, 58.4178 for the weekly seasonal naive, and 66.7329 for the yearly seasonal naive. On the same rows, the relative MAE gap equals the relative WAPE gap because both scale with total absolute error.",
     "Pooled daily RMSE was 125.0627 for Tweedie, 129.6483 for L1, 128.8235 for the 28-day moving average, 193.7641 for the weekly seasonal naive, and 228.8161 for the yearly seasonal naive.",
     "Pooled daily sMAPE was 1.190162 for Tweedie, 1.177392 for L1, 1.141511 for the 28-day moving average, 0.964985 for the weekly seasonal naive, and 1.002279 for the yearly seasonal naive."
-  ]
+  ],
+  "robustness": {
+    "interval": {
+      "statistic": "order_wape_model_minus_baseline",
+      "model": "lightgbm_tweedie",
+      "baseline": "moving_average_28",
+      "n_origins": 10,
+      "n_draws": 10000,
+      "seed": 42,
+      "point": -0.04086645452405663,
+      "ci_low": -0.09027434231010835,
+      "ci_high": 0.009448963761033387,
+      "share_draws_negative": 0.9447,
+      "includes_zero": true,
+      "method": "origin_cluster_percentile_linear"
+    },
+    "folds": {
+      "model": "lightgbm_tweedie",
+      "baseline": "moving_average_28",
+      "n_origins": 10,
+      "n_lower": 6,
+      "n_ties": 0,
+      "n_higher": 4
+    },
+    "contributor": {
+      "sku": "22197",
+      "origin_date": "2011-06-14",
+      "actual": 1626.0,
+      "forecast_model": 1828.2099172103472,
+      "forecast_baseline": 6175.0,
+      "ae_reduction": 4346.790082789653,
+      "net_ae_reduction": 20943.77187839734,
+      "share_of_net": 0.20754571373426733,
+      "model": "lightgbm_tweedie",
+      "baseline": "moving_average_28"
+    },
+    "active": {
+      "window_days": 90,
+      "n_active_sku_origins": 391,
+      "n_sku_origins": 400,
+      "wape": {
+        "moving_average_28": 0.395995652623548,
+        "lightgbm_l1": 0.5207687717645397,
+        "lightgbm_tweedie": 0.35324035545280275
+      },
+      "bias": {
+        "moving_average_28": -0.05023873496808737,
+        "lightgbm_l1": -0.4871863731970738,
+        "lightgbm_tweedie": -0.0650942551815907
+      }
+    },
+    "horizon": [
+      {
+        "h_min": 1,
+        "h_max": 7,
+        "wape": {
+          "moving_average_28": 0.5672508336420896,
+          "lightgbm_l1": 0.6074648058338555,
+          "lightgbm_tweedie": 0.5712414239364142
+        },
+        "bias": {
+          "moving_average_28": -0.09828454983327158,
+          "lightgbm_l1": -0.5017290568147954,
+          "lightgbm_tweedie": -0.06342173608721433
+        }
+      },
+      {
+        "h_min": 8,
+        "h_max": 14,
+        "wape": {
+          "moving_average_28": 0.5838323821436948,
+          "lightgbm_l1": 0.6103251890092996,
+          "lightgbm_tweedie": 0.5440666439995747
+        },
+        "bias": {
+          "moving_average_28": -0.048655304510984286,
+          "lightgbm_l1": -0.49240976108963985,
+          "lightgbm_tweedie": -0.07570962284111069
+        }
+      },
+      {
+        "h_min": 15,
+        "h_max": 21,
+        "wape": {
+          "moving_average_28": 0.5706394056765509,
+          "lightgbm_l1": 0.536635885005373,
+          "lightgbm_tweedie": 0.5214510296303794
+        },
+        "bias": {
+          "moving_average_28": 0.10380250900283919,
+          "lightgbm_l1": -0.4041824884086843,
+          "lightgbm_tweedie": 0.054101447736761565
+        }
+      },
+      {
+        "h_min": 22,
+        "h_max": 28,
+        "wape": {
+          "moving_average_28": 0.5916242198149078,
+          "lightgbm_l1": 0.6155225112428511,
+          "lightgbm_tweedie": 0.5659394740952978
+        },
+        "bias": {
+          "moving_average_28": -0.12700695889231653,
+          "lightgbm_l1": -0.5275774900299435,
+          "lightgbm_tweedie": -0.14429913370053327
+        }
+      },
+      {
+        "h_min": 1,
+        "h_max": 14,
+        "wape": {
+          "moving_average_28": 0.46188465342768015,
+          "lightgbm_l1": 0.5592073976880451,
+          "lightgbm_tweedie": 0.4377210614518584
+        },
+        "bias": {
+          "moving_average_28": -0.07413452027695351,
+          "lightgbm_l1": -0.4971942051211004,
+          "lightgbm_tweedie": -0.06940113042142602
+        }
+      },
+      {
+        "h_min": 1,
+        "h_max": 28,
+        "wape": {
+          "moving_average_28": 0.395995652623548,
+          "lightgbm_l1": 0.5225050311785084,
+          "lightgbm_tweedie": 0.35512919809949145
+        },
+        "bias": {
+          "moving_average_28": -0.05023873496808737,
+          "lightgbm_l1": -0.4854501137831051,
+          "lightgbm_tweedie": -0.06320541253490207
+        }
+      }
+    ],
+    "quartile": {
+      "quartile": "Q1",
+      "n_sku_origins": 100,
+      "actual_units": 49108.0,
+      "mean_actual": 491.08,
+      "wape": {
+        "moving_average_28": 0.5538201515028102,
+        "lightgbm_l1": 0.43323150845920816,
+        "lightgbm_tweedie": 0.5612264860548436
+      },
+      "bias": {
+        "moving_average_28": 0.024863566017756782,
+        "lightgbm_l1": -0.27326505488163166,
+        "lightgbm_tweedie": 0.3323896977020516
+      },
+      "mean_forecast": {
+        "moving_average_28": 503.29,
+        "lightgbm_l1": 356.88499684872835,
+        "lightgbm_tweedie": 654.3099327475235
+      },
+      "n_above_actual": {
+        "moving_average_28": 42,
+        "lightgbm_l1": 37,
+        "lightgbm_tweedie": 77
+      }
+    },
+    "quiet": [
+      {
+        "sku": "84270",
+        "description": "ASSTD DESIGN BUBBLE GUM RING",
+        "n_origins": 10,
+        "actual_units": 0.0,
+        "last_positive_date": "2010-12-06",
+        "units_before_cutoff": 20866.0,
+        "share_of_net_ae_reduction": -0.059211099426947564,
+        "net_ae_reduction": 20943.77187839734,
+        "forecast_moving_average_28": 0.0,
+        "forecast_lightgbm_l1": 976.5434385441348,
+        "forecast_lightgbm_tweedie": 1240.1037590670935
+      }
+    ],
+    "refit": {
+      "n_skus": 20,
+      "skus": [
+        "85123A",
+        "84077",
+        "21212",
+        "85099B",
+        "84879",
+        "22197",
+        "84991",
+        "21977",
+        "21232",
+        "21982",
+        "21213",
+        "21980",
+        "84755",
+        "15036",
+        "85099F",
+        "84946",
+        "84270",
+        "84992",
+        "20725",
+        "71459"
+      ],
+      "n_sku_origins": 200,
+      "refit_wape": {
+        "moving_average_28": 0.39644125496781074,
+        "lightgbm_l1": 0.514966919195654,
+        "lightgbm_tweedie": 0.3735000895441949
+      },
+      "refit_bias": {
+        "moving_average_28": -0.055483206731402696,
+        "lightgbm_l1": -0.4731913410885842,
+        "lightgbm_tweedie": -0.10424209268466879
+      },
+      "slice_wape": {
+        "moving_average_28": 0.39644125496781074,
+        "lightgbm_l1": 0.5407414526814531,
+        "lightgbm_tweedie": 0.3571252541531532
+      },
+      "slice_bias": {
+        "moving_average_28": -0.055483206731402696,
+        "lightgbm_l1": -0.5115103682552006,
+        "lightgbm_tweedie": -0.090894321777072
+      }
+    }
+  }
 }
