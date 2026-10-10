@@ -26,8 +26,8 @@ def origin_dates(
     first = first_lag + pd.Timedelta(days=warmup_days + horizon)
     last = pd.Timestamp(max_date) - pd.Timedelta(days=horizon)
     origins: list[pd.Timestamp] = []
-    cursor = first
-    while cursor <= last:
-        origins.append(pd.Timestamp(cursor))
-        cursor = cursor + pd.Timedelta(days=step)
+    day = first
+    while day <= last:
+        origins.append(pd.Timestamp(day))
+        day = day + pd.Timedelta(days=step)
     return origins
