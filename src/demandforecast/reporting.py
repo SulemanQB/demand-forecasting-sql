@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from demandforecast.config import MODEL_LABELS, MODEL_NAMES
+from demandforecast.config import DAILY_MODELS, MODEL_LABELS, WEEKLY_MODELS
 from demandforecast.metrics import relative_reduction_pct
 
 
@@ -38,18 +38,24 @@ def write_metrics_csv(metrics: pd.DataFrame, path: Path) -> None:
     metrics.to_csv(path, index=False)
 
 
-def write_metrics_md(metrics: pd.DataFrame, paragraphs: list[str], path: Path) -> None:
-    lines = ["# Backtest metrics", ""]
+def write_metrics_md(
+    metrics: pd.DataFrame,
+    paragraphs: list[str],
+    path: Path,
+    title: str = "Backtest metrics",
+) -> None:
+    lines = [f"# {title}", ""]
     for paragraph in paragraphs:
         lines.append(paragraph)
         lines.append("")
     lines.extend(
         [
-            "WAPE and sMAPE in this table are ratios (sMAPE uses the 0/0 = 0 convention and is not multiplied by 100). "
+            "WAPE, bias, and sMAPE in this table are ratios (sMAPE uses the 0/0 = 0 convention and is not multiplied by 100). "
+            "Bias is (sum of forecast minus actual) / sum of actual. Negative bias is an under-forecast. "
             "The CSV stores the same figures at full precision. Displayed rates are rounded to 6 decimal places and MAE/RMSE to 4.",
             "",
-            "| fold | origin | model | points | MAE | RMSE | WAPE | sMAPE |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| fold | origin | model | points | MAE | RMSE | WAPE | sMAPE | bias |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in metrics.itertuples(index=False):
@@ -65,6 +71,7 @@ def write_metrics_md(metrics: pd.DataFrame, paragraphs: list[str], path: Path) -
                     _fmt_error(row.rmse),
                     _fmt_rate(row.wape),
                     _fmt_rate(row.smape),
+                    f"{row.bias:+.6f}",
                 ]
             )
             + " |"
@@ -73,57 +80,126 @@ def write_metrics_md(metrics: pd.DataFrame, paragraphs: list[str], path: Path) -
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
-def headline_block(metrics: pd.DataFrame, n_folds: int, horizon: int) -> tuple[list[str], dict]:
-    pooled = metrics.loc[metrics["fold"] == "pooled"].set_index("model")
-    wape = {name: float(pooled.loc[name, "wape"]) for name in MODEL_NAMES}
-    mae = {name: float(pooled.loc[name, "mae"]) for name in MODEL_NAMES}
-    rmse = {name: float(pooled.loc[name, "rmse"]) for name in MODEL_NAMES}
-    smape = {name: float(pooled.loc[name, "smape"]) for name in MODEL_NAMES}
-    phrases = [
-        comparison_phrase(MODEL_LABELS[name], wape[name], wape["lightgbm"])
-        for name in MODEL_NAMES
-        if name != "lightgbm"
-    ]
-    headline = (
-        f"On a {horizon}-day horizon across {n_folds} rolling origins, "
-        f"LightGBM pooled WAPE was {wape['lightgbm']:.6f}: " + "; ".join(phrases) + "."
+def weekly_order_sentence(decision: pd.DataFrame, n_folds: int, horizon_weeks: int) -> str:
+    order = decision.loc[decision["grain"] == "order_total"].set_index("model")
+    winner = order["wape"].idxmin()
+    n_orders = int(order.loc[winner, "n_points"])
+    bits = []
+    for name in WEEKLY_MODELS:
+        row = order.loc[name]
+        bits.append(
+            f"{MODEL_LABELS[name]} WAPE {float(row.wape):.6f} (bias {float(row.bias):+.6f})"
+        )
+    return (
+        f"On the weekly track (ISO weeks, horizon {horizon_weeks}, {n_folds} origins, "
+        f"{n_orders} SKU-origins), the {MODEL_LABELS[winner]} has the lowest summed-horizon WAPE. "
+        + "; ".join(bits)
+        + "."
     )
-    mae_rel = relative_reduction_pct(mae["seasonal_naive_w7"], mae["lightgbm"])
+
+
+def headline_block(
+    metrics: pd.DataFrame,
+    decision: pd.DataFrame,
+    n_folds: int,
+    horizon: int,
+    weekly_decision: pd.DataFrame | None = None,
+    weekly_folds: int | None = None,
+    weekly_horizon: int | None = None,
+) -> tuple[list[str], dict]:
+    order = decision.loc[decision["grain"] == "order_total"].set_index("model")
+    daily = decision.loc[decision["grain"] == "daily"].set_index("model")
+    aggregate = decision.loc[decision["grain"] == "daily_aggregate"].set_index("model")
+    winner = str(order["wape"].idxmin())
+    n_orders = int(order.loc[winner, "n_points"])
+    lead = (
+        f"At the {horizon}-day order quantity ({n_orders} SKU-origins across {n_folds} origins), "
+        f"the {MODEL_LABELS[winner]} has the lowest WAPE, {float(order.loc[winner, 'wape']):.6f}, "
+        f"with bias {float(order.loc[winner, 'bias']):+.6f}."
+    )
+    tweedie = order.loc["lightgbm_tweedie"]
+    median = order.loc["lightgbm_l1"]
+    average = order.loc["moving_average_28"]
+    second = (
+        f"LightGBM Tweedie order-quantity WAPE was {float(tweedie.wape):.6f} "
+        f"(bias {float(tweedie.bias):+.6f}): "
+        f"{comparison_phrase(MODEL_LABELS['moving_average_28'], float(average.wape), float(tweedie.wape))}. "
+        f"LightGBM L1, fit on absolute error, had order-quantity WAPE {float(median.wape):.6f} "
+        f"(bias {float(median.bias):+.6f})."
+    )
+    bias_bits = [
+        f"{MODEL_LABELS[name]} {float(order.loc[name, 'bias']):+.6f}" for name in DAILY_MODELS
+    ]
+    bias_line = (
+        "Order-quantity bias, (forecast minus actual) / actual, was " + "; ".join(bias_bits) + "."
+    )
+    agg_bits = [
+        f"{float(aggregate.loc[name, 'wape']):.6f} for the {MODEL_LABELS[name]}"
+        for name in DAILY_MODELS
+    ]
+    agg_line = (
+        "Summing the assortment before scoring, daily aggregate WAPE was " + "; ".join(agg_bits) + "."
+    )
+    daily_line = (
+        f"On individual SKU-days, Tweedie WAPE was {float(daily.loc['lightgbm_tweedie', 'wape']):.6f} "
+        f"(bias {float(daily.loc['lightgbm_tweedie', 'bias']):+.6f}) and L1 WAPE was "
+        f"{float(daily.loc['lightgbm_l1', 'wape']):.6f} "
+        f"(bias {float(daily.loc['lightgbm_l1', 'bias']):+.6f}), against "
+        f"{float(daily.loc['moving_average_28', 'wape']):.6f} for the 28-day moving average and "
+        f"{float(daily.loc['seasonal_naive_w7', 'wape']):.6f} for the weekly seasonal naive. "
+        "The daily score is a shape score; the order quantity above is the replenishment comparison."
+    )
+    paragraphs = [lead, second, bias_line, agg_line, daily_line]
+    if weekly_decision is not None:
+        if weekly_folds is None or weekly_horizon is None:
+            raise ValueError("Weekly headline needs the fold count and horizon")
+        paragraphs.append(weekly_order_sentence(weekly_decision, weekly_folds, weekly_horizon))
+
+    pooled = metrics.loc[metrics["fold"] == "pooled"].set_index("model")
+    mae = {name: float(pooled.loc[name, "mae"]) for name in DAILY_MODELS}
+    rmse = {name: float(pooled.loc[name, "rmse"]) for name in DAILY_MODELS}
+    smape = {name: float(pooled.loc[name, "smape"]) for name in DAILY_MODELS}
     mae_line = (
-        f"Pooled MAE was {mae['lightgbm']:.4f} for LightGBM and "
-        f"{mae['seasonal_naive_w7']:.4f} for the weekly seasonal naive "
-        f"({mae_rel:.2f}% lower). The relative MAE reduction matches the WAPE reduction "
-        f"because both are proportional to total absolute error."
+        f"Pooled daily MAE was {mae['lightgbm_tweedie']:.4f} for Tweedie, "
+        f"{mae['lightgbm_l1']:.4f} for L1, "
+        f"{mae['moving_average_28']:.4f} for the 28-day moving average, "
+        f"{mae['seasonal_naive_w7']:.4f} for the weekly seasonal naive, and "
+        f"{mae['seasonal_naive_y364']:.4f} for the yearly seasonal naive. "
+        "On the same rows, the relative MAE gap equals the relative WAPE gap because both scale with total absolute error."
     )
     rmse_line = (
-        f"Pooled RMSE was {rmse['lightgbm']:.4f} for LightGBM, "
-        f"{rmse['seasonal_naive_w7']:.4f} for the weekly seasonal naive, "
-        f"{rmse['seasonal_naive_y364']:.4f} for the yearly seasonal naive, and "
-        f"{rmse['moving_average_28']:.4f} for the 28-day moving average."
+        f"Pooled daily RMSE was {rmse['lightgbm_tweedie']:.4f} for Tweedie, "
+        f"{rmse['lightgbm_l1']:.4f} for L1, "
+        f"{rmse['moving_average_28']:.4f} for the 28-day moving average, "
+        f"{rmse['seasonal_naive_w7']:.4f} for the weekly seasonal naive, and "
+        f"{rmse['seasonal_naive_y364']:.4f} for the yearly seasonal naive."
     )
     smape_line = (
-        f"Pooled sMAPE was {smape['lightgbm']:.6f} for LightGBM, "
-        f"{smape['seasonal_naive_w7']:.6f} for the weekly seasonal naive, "
-        f"{smape['seasonal_naive_y364']:.6f} for the yearly seasonal naive, and "
-        f"{smape['moving_average_28']:.6f} for the 28-day moving average."
+        f"Pooled daily sMAPE was {smape['lightgbm_tweedie']:.6f} for Tweedie, "
+        f"{smape['lightgbm_l1']:.6f} for L1, "
+        f"{smape['moving_average_28']:.6f} for the 28-day moving average, "
+        f"{smape['seasonal_naive_w7']:.6f} for the weekly seasonal naive, and "
+        f"{smape['seasonal_naive_y364']:.6f} for the yearly seasonal naive."
     )
-    reductions = {
-        f"wape_reduction_pct_vs_{name}": relative_reduction_pct(wape[name], wape["lightgbm"])
-        for name in MODEL_NAMES
-        if name != "lightgbm"
-    }
+    paragraphs.extend([mae_line, rmse_line, smape_line])
+
+    def _column(frame: pd.DataFrame, column: str) -> dict[str, float]:
+        return {name: float(frame.loc[name, column]) for name in DAILY_MODELS}
+
     summary = {
-        "wape": wape,
+        "order_winner": winner,
+        "order_wape": _column(order, "wape"),
+        "order_bias": _column(order, "bias"),
+        "daily_wape": _column(daily, "wape"),
+        "daily_bias": _column(daily, "bias"),
+        "aggregate_wape": _column(aggregate, "wape"),
         "mae": mae,
         "rmse": rmse,
         "smape": smape,
-        **reductions,
-        "headline": headline,
-        "mae_line": mae_line,
-        "rmse_line": rmse_line,
-        "smape_line": smape_line,
+        "headline": lead,
+        "paragraphs": paragraphs,
     }
-    return [headline, mae_line, rmse_line, smape_line], summary
+    return paragraphs, summary
 
 
 def write_json(payload: dict, path: Path) -> None:

@@ -75,6 +75,10 @@ def test_clean_filters_cancellations_and_non_products():
         "SELECT description FROM sku_catalog WHERE sku = '85099B'"
     ).fetchone()[0]
     assert heart == "HEART"
+    matched = con.execute(
+        "SELECT count(*), count(DISTINCT return_id), count(DISTINCT sale_id) FROM cancel_matches"
+    ).fetchone()
+    assert matched == (1, 1, 1)
 
 
 def test_window_features_and_naive_date():
@@ -155,6 +159,156 @@ def test_features_do_not_change_when_the_future_changes():
     ).fetchone()
     assert updated[0] == pytest.approx(30)
     assert updated[1] == pytest.approx(999)
+
+
+def test_cancellation_match_is_one_to_one():
+    con = _connect()
+    rows = [
+        _line("S1", "88888", "CUP", 12, "2020-01-01", 2.0, 9, "United Kingdom"),
+        _line("S2", "88888", "CUP", 12, "2020-01-10", 2.0, 9, "United Kingdom"),
+        _line("C1", "88888", "CUP", -12, "2020-01-12", 2.0, 9, "United Kingdom"),
+        _line("T1", "99999", "TIN", 12, "2020-01-10", 2.0, 4, "United Kingdom"),
+        _line("C2", "99999", "TIN", -12, "2020-01-11", 2.0, 4, "United Kingdom"),
+        _line("C3", "99999", "TIN", -12, "2020-01-12", 2.0, 4, "United Kingdom"),
+    ]
+    _load_raw(con, rows)
+    create_config_table(con, _toy_config())
+    run_sql_file(con, "01_clean.sql")
+
+    kept = con.execute(
+        """
+        SELECT invoice, quantity
+        FROM clean_lines
+        WHERE stock_code = '88888'
+        ORDER BY invoice
+        """
+    ).fetchall()
+    assert kept == [("S1", 12)]
+    gone = con.execute("SELECT count(*) FROM clean_lines WHERE stock_code = '99999'").fetchone()[0]
+    assert gone == 0
+    pairs = con.execute(
+        """
+        SELECT m.stock_code, count(*), count(DISTINCT m.sale_id), count(DISTINCT m.return_id)
+        FROM cancel_matches m
+        GROUP BY m.stock_code
+        ORDER BY m.stock_code
+        """
+    ).fetchall()
+    assert pairs == [("88888", 1, 1, 1), ("99999", 1, 1, 1)]
+
+    con.execute("CREATE TABLE supervised (asof_date DATE, target_date DATE)")
+    run_sql_file(con, "03_quality.sql")
+    checks = con.execute("SELECT * FROM quality_checks").fetchdf().iloc[0]
+    assert int(checks["n_duplicate_key_rows"]) == 0
+    assert int(checks["n_match_violations"]) == 0
+    assert int(checks["n_panel"]) == int(checks["n_panel_keys"])
+    assert int(checks["n_calendar"]) == int(checks["calendar_span"])
+    assert float(checks["clean_quantity"]) == pytest.approx(float(checks["daily_units"]))
+    assert int(checks["n_matched_sales"]) == int(checks["n_matched_returns"]) == 2
+    assert int(checks["n_clean_lines"]) == int(checks["n_sales_lines"]) - 2
+    assert int(checks["n_bad_asof"]) == 0
+
+
+def test_top_skus_are_ranked_before_the_first_origin():
+    con = _connect()
+    rows = []
+    for day in range(1, 8):
+        rows.append(_line(f"A{day}", "10001", "HIGH", 10, f"2020-01-{day:02d}", 2.0, 9, "United Kingdom"))
+        rows.append(_line(f"Z{day}", "10002", "LATE", 1, f"2020-01-{day:02d}", 2.0, 9, "United Kingdom"))
+    rows.append(_line("A9", "10001", "HIGH", 1, "2020-01-09", 2.0, 9, "United Kingdom"))
+    rows.append(_line("Z9", "10002", "LATE", 500, "2020-01-09", 2.0, 9, "United Kingdom"))
+    _load_raw(con, rows)
+    create_config_table(con, _toy_config(season_year=3, lag_warmup_days=2, horizon=2, top_n=1))
+    run_sql_file(con, "01_clean.sql")
+
+    cutoff = con.execute("SELECT selection_cutoff FROM selection_cutoff").fetchone()[0]
+    assert pd.Timestamp(cutoff) == pd.Timestamp("2020-01-08")
+    selected = con.execute("SELECT sku, total_units, sale_days FROM selected_skus").fetchall()
+    assert len(selected) == 1
+    assert selected[0][0] == "10001"
+    assert selected[0][1] == pytest.approx(70)
+    assert selected[0][2] == 7
+    panel_skus = [row[0] for row in con.execute("SELECT DISTINCT sku FROM panel").fetchall()]
+    assert panel_skus == ["10001"]
+
+
+def test_weekly_panel_reconciles_to_daily_and_starts_on_monday():
+    con = _connect()
+    start = pd.Timestamp("2020-01-01")
+    rows = []
+    for i in range(40):
+        rows.append(
+            {
+                "sku": "A",
+                "date": start + pd.Timedelta(days=i),
+                "units": 1.0,
+                "avg_price": 2.0,
+            }
+        )
+    frame = pd.DataFrame(rows)
+    con.register("panel_df", frame)
+    con.execute(
+        """
+        CREATE TABLE panel AS
+        SELECT sku::VARCHAR AS sku, cast(date AS DATE) AS date,
+               units::DOUBLE AS units, avg_price::DOUBLE AS avg_price
+        FROM panel_df
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE selected_skus AS
+        SELECT 'A'::VARCHAR AS sku, 40.0::DOUBLE AS total_units, 40::INTEGER AS sale_days
+        """
+    )
+    create_config_table(con, _toy_config())
+    run_sql_file(con, "04_weekly.sql")
+    bad_monday = con.execute(
+        "SELECT count(*) FROM weekly_panel WHERE isodow(week_start) <> 1"
+    ).fetchone()[0]
+    assert bad_monday == 0
+    daily_units, weekly_units = con.execute(
+        """
+        SELECT
+            (SELECT sum(units) FROM panel),
+            (SELECT sum(units) FROM weekly_panel)
+        """
+    ).fetchone()
+    assert weekly_units == pytest.approx(daily_units)
+    assert con.execute("SELECT count(*) FROM weekly_duplicate_keys").fetchone()[0] == 0
+    naive = con.execute(
+        """
+        SELECT count(*) FROM weekly_supervised
+        WHERE seasonal_naive_w1 IS NULL
+           OR abs(seasonal_naive_w1 - units_asof) > 1e-6
+           OR naive_w1_date <> asof_date
+           OR horizon < 1
+           OR date_diff('day', asof_date, target_date) <> horizon * 7
+        """
+    ).fetchone()[0]
+    assert naive == 0
+    assert con.execute("SELECT count(*) FROM weekly_supervised").fetchone()[0] > 0
+
+
+def _load_raw(con, rows) -> None:
+    frame = pd.DataFrame(rows)
+    frame["customer_id"] = frame["customer_id"].astype("Int64")
+    con.register("raw_df", frame)
+    con.execute(
+        """
+        CREATE TABLE raw_invoices AS
+        SELECT
+            invoice::VARCHAR AS invoice,
+            stock_code::VARCHAR AS stock_code,
+            description::VARCHAR AS description,
+            quantity::BIGINT AS quantity,
+            cast(invoice_date AS TIMESTAMP) AS invoice_date,
+            price::DOUBLE AS price,
+            try_cast(customer_id AS BIGINT) AS customer_id,
+            country::VARCHAR AS country
+        FROM raw_df
+        """
+    )
 
 
 def _snapshot(con) -> pd.DataFrame:
