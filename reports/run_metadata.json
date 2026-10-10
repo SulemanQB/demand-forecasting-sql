@@ -3,6 +3,7 @@
   "fold_step_days": 28,
   "n_folds": 10,
   "n_skus": 40,
+  "n_lumpy_rows": 7728,
   "origins": [
     "2011-02-22",
     "2011-03-22",
@@ -15,7 +16,20 @@
     "2011-10-04",
     "2011-11-01"
   ],
-  "elapsed_seconds": 24.93883452,
+  "weekly_origins": [
+    "2011-02-21",
+    "2011-03-21",
+    "2011-04-18",
+    "2011-05-16",
+    "2011-06-13",
+    "2011-07-11",
+    "2011-08-08",
+    "2011-09-05",
+    "2011-10-03",
+    "2011-10-31"
+  ],
+  "weekly_n_folds": 10,
+  "elapsed_seconds": 43.164955440000085,
   "config": {
     "country": "United Kingdom",
     "top_n": 40,
@@ -36,7 +50,18 @@
     "lgb_feature_fraction": 0.9,
     "lgb_bagging_fraction": 0.8,
     "lgb_lambda_l2": 1.0,
-    "seed": 42
+    "seed": 42,
+    "tweedie_variance_power": 1.5,
+    "croston_alpha": 0.1,
+    "adi_threshold": 1.32,
+    "cv2_threshold": 0.49,
+    "stockout_to_holding": 3.0,
+    "weekly_horizon": 4,
+    "weekly_step": 4,
+    "weekly_season_year": 52,
+    "weekly_warmup_weeks": 8,
+    "weekly_min_history": 5,
+    "weekly_ma_window": 4
   },
   "build": {
     "dataset_url": "https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip",
@@ -48,337 +73,448 @@
     "cancel_match_days": 21,
     "horizon": 28,
     "min_history_days": 29,
+    "selection_rule": "Top SKUs by units on dates strictly before the first origin, among SKUs with at least min_sale_days in that window. The cutoff equals min(sale date) + yearly_lag_days + lag_warmup_days + horizon.",
+    "selection_cutoff": "2011-02-22",
     "n_raw_rows": 1044848,
-    "n_clean_lines": 930509,
-    "n_skus_eligible": 936,
+    "n_clean_lines": 931357,
+    "n_sales_lines": 935027,
+    "n_return_lines": 15112,
+    "n_cancel_matches": 3670,
+    "n_skus_eligible_before_cutoff": 430,
     "n_skus_selected": 40,
-    "selected_units": 1585714.0,
-    "all_clean_units": 8919810.0,
-    "selected_unit_share": 0.1777744144774384,
+    "selected_units_before_cutoff": 936678.0,
+    "units_before_cutoff": 5215129.0,
+    "selected_unit_share_before_cutoff": 0.17960782945158213,
+    "selected_units_full_period": 1475728.0,
+    "all_clean_units": 8950843.0,
+    "selected_unit_share_full_period": 0.16487028093331543,
     "date_min": "2009-12-01",
     "date_max": "2011-12-09",
+    "week_min": "2009-11-30",
+    "week_max": "2011-12-05",
     "n_panel_rows": 29560,
     "n_supervised_rows": 780080,
+    "n_weekly_supervised_rows": 15920,
+    "n_weekly_unit_mismatches": 0,
+    "quality": {
+      "n_panel": 29560,
+      "n_panel_keys": 29560,
+      "n_calendar": 739,
+      "calendar_span": 739,
+      "clean_quantity": 8950843.0,
+      "daily_units": 8950843.0,
+      "n_matched_sales": 3670,
+      "n_matched_returns": 3670,
+      "n_matched_sale_ids": 3670,
+      "n_sales_lines": 935027,
+      "n_return_lines": 15112,
+      "n_clean_lines": 931357,
+      "n_bad_asof": 0,
+      "n_selected": 40,
+      "selection_cutoff": "2011-02-22",
+      "n_duplicate_key_rows": 0,
+      "n_match_violations": 0
+    },
     "skus": [
+      {
+        "sku": "85123A",
+        "description": "WHITE HANGING HEART T-LIGHT HOLDER",
+        "units_before_cutoff": 60447.0,
+        "sale_days_before_cutoff": 360,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 83909.0,
+        "full_sale_days": 603
+      },
       {
         "sku": "84077",
         "description": "WORLD WAR 2 GLIDERS ASSTD DESIGNS",
-        "total_units": 96970.0,
-        "sale_days": 447,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "85099B",
-        "description": "JUMBO BAG RED RETROSPOT",
-        "total_units": 86792.0,
-        "sale_days": 585,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "85123A",
-        "description": "CREAM HANGING HEART T-LIGHT HOLDER",
-        "total_units": 83889.0,
-        "sale_days": 603,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "22197",
-        "description": "POPCORN HOLDER",
-        "total_units": 82261.0,
-        "sale_days": 554,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "84879",
-        "description": "ASSORTED COLOUR BIRD ORNAMENT",
-        "total_units": 74031.0,
-        "sale_days": 579,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "units_before_cutoff": 56976.0,
+        "sale_days_before_cutoff": 263,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 97066.0,
+        "full_sale_days": 448
       },
       {
         "sku": "21212",
         "description": "PACK OF 72 RETROSPOT CAKE CASES",
-        "total_units": 70585.0,
-        "sale_days": 586,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "units_before_cutoff": 51436.0,
+        "sale_days_before_cutoff": 348,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 70705.0,
+        "full_sale_days": 586
       },
       {
-        "sku": "17003",
-        "description": "BROCADE RING PURSE",
-        "total_units": 69301.0,
-        "sale_days": 296,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "sku": "85099B",
+        "description": "JUMBO BAG RED RETROSPOT",
+        "units_before_cutoff": 50342.0,
+        "sale_days_before_cutoff": 345,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 87412.0,
+        "full_sale_days": 586
       },
       {
-        "sku": "21977",
-        "description": "PACK OF 60 PINK PAISLEY CAKE CASES",
-        "total_units": 46027.0,
-        "sale_days": 555,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "84879",
+        "description": "ASSORTED COLOUR BIRD ORNAMENT",
+        "units_before_cutoff": 45378.0,
+        "sale_days_before_cutoff": 340,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 74047.0,
+        "full_sale_days": 579
+      },
+      {
+        "sku": "22197",
+        "description": "SMALL POPCORN HOLDER",
+        "units_before_cutoff": 34631.0,
+        "sale_days_before_cutoff": 321,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 82273.0,
+        "full_sale_days": 554
       },
       {
         "sku": "84991",
         "description": "60 TEATIME FAIRY CAKE CASES",
-        "total_units": 41183.0,
-        "sale_days": 551,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "units_before_cutoff": 30017.0,
+        "sale_days_before_cutoff": 342,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 41183.0,
+        "full_sale_days": 551
       },
       {
-        "sku": "15036",
-        "description": "ASSORTED COLOURS SILK FAN",
-        "total_units": 39028.0,
-        "sale_days": 425,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "22178",
-        "description": "VICTORIAN GLASS HANGING T-LIGHT",
-        "total_units": 38707.0,
-        "sale_days": 556,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "22616",
-        "description": "PACK OF 12 LONDON TISSUES",
-        "total_units": 37462.0,
-        "sale_days": 366,
-        "first_sale": "2010-05-06T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "84755",
-        "description": "COLOUR GLASS T-LIGHT HOLDER HANGING",
-        "total_units": 36458.0,
-        "sale_days": 483,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "84946",
-        "description": "ANTIQUE SILVER T-LIGHT GLASS",
-        "total_units": 35934.0,
-        "sale_days": 539,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "21213",
-        "description": "PACK OF 72 SKULL CAKE CASES",
-        "total_units": 34802.0,
-        "sale_days": 529,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "85099F",
-        "description": "JUMBO BAG STRAWBERRY",
-        "total_units": 34464.0,
-        "sale_days": 545,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "sku": "21977",
+        "description": "PACK OF 60 PINK PAISLEY CAKE CASES",
+        "units_before_cutoff": 28390.0,
+        "sale_days_before_cutoff": 335,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 46051.0,
+        "full_sale_days": 555
       },
       {
         "sku": "21232",
-        "description": "STRAWBERRY CERAMIC TRINKET POT",
-        "total_units": 34399.0,
-        "sale_days": 564,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "22386",
-        "description": "JUMBO BAG PINK POLKADOT",
-        "total_units": 34133.0,
-        "sale_days": 535,
-        "first_sale": "2010-01-29T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "84568",
-        "description": "GIRLS ALPHABET IRON ON PATCHES",
-        "total_units": 33897.0,
-        "sale_days": 216,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "22086",
-        "description": "PAPER CHAIN KIT 50'S CHRISTMAS",
-        "total_units": 33551.0,
-        "sale_days": 299,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "20725",
-        "description": "LUNCH BAG RED RETROSPOT",
-        "total_units": 31847.0,
-        "sale_days": 592,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "description": "STRAWBERRY CERAMIC TRINKET BOX",
+        "units_before_cutoff": 26579.0,
+        "sale_days_before_cutoff": 346,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 34400.0,
+        "full_sale_days": 564
       },
       {
         "sku": "21982",
         "description": "PACK OF 12 SUKI TISSUES",
-        "total_units": 31170.0,
-        "sale_days": 355,
-        "first_sale": "2009-12-07T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "units_before_cutoff": 26210.0,
+        "sale_days_before_cutoff": 198,
+        "first_sale": "2009-12-07",
+        "last_sale": "2011-12-09",
+        "full_units": 31170.0,
+        "full_sale_days": 355
       },
       {
-        "sku": "84347",
-        "description": "ROTATING SILVER ANGELS T-LIGHT HLDR",
-        "total_units": 30274.0,
-        "sale_days": 248,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
-      },
-      {
-        "sku": "71459",
-        "description": "HANGING JAM JAR T-LIGHT HOLDERS",
-        "total_units": 29928.0,
-        "sale_days": 431,
-        "first_sale": "2009-12-02T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
-      },
-      {
-        "sku": "21915",
-        "description": "RED  HARMONICA IN BOX",
-        "total_units": 29455.0,
-        "sale_days": 376,
-        "first_sale": "2009-12-04T00:00:00",
-        "last_sale": "2011-12-07T00:00:00"
-      },
-      {
-        "sku": "85099C",
-        "description": "JUMBO  BAG BAROQUE BLACK WHITE",
-        "total_units": 29234.0,
-        "sale_days": 554,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "21213",
+        "description": "PACK OF 72 SKULL CAKE CASES",
+        "units_before_cutoff": 24301.0,
+        "sale_days_before_cutoff": 320,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 34850.0,
+        "full_sale_days": 529
       },
       {
         "sku": "21980",
         "description": "PACK OF 12 RED RETROSPOT TISSUES",
-        "total_units": 27871.0,
-        "sale_days": 363,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "units_before_cutoff": 23869.0,
+        "sale_days_before_cutoff": 233,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 27895.0,
+        "full_sale_days": 363
       },
       {
-        "sku": "22355",
-        "description": "CHARLOTTE BAG SUKI DESIGN",
-        "total_units": 27817.0,
-        "sale_days": 545,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "84755",
+        "description": "COLOUR GLASS T-LIGHT HOLDER HANGING",
+        "units_before_cutoff": 22705.0,
+        "sale_days_before_cutoff": 278,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 36746.0,
+        "full_sale_days": 483
       },
       {
-        "sku": "22952",
-        "description": "60 CAKE CASES VINTAGE CHRISTMAS",
-        "total_units": 27512.0,
-        "sale_days": 215,
-        "first_sale": "2010-09-17T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "15036",
+        "description": "ASSORTED COLOURS SILK FAN",
+        "units_before_cutoff": 21194.0,
+        "sale_days_before_cutoff": 239,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 39028.0,
+        "full_sale_days": 425
       },
       {
-        "sku": "22469",
-        "description": "HEART OF WICKER SMALL",
-        "total_units": 26948.0,
-        "sale_days": 415,
-        "first_sale": "2010-04-22T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "85099F",
+        "description": "JUMBO BAG STRAWBERRY",
+        "units_before_cutoff": 21135.0,
+        "sale_days_before_cutoff": 338,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 34774.0,
+        "full_sale_days": 546
+      },
+      {
+        "sku": "84946",
+        "description": "ANTIQUE SILVER TEA GLASS ETCHED",
+        "units_before_cutoff": 20882.0,
+        "sale_days_before_cutoff": 318,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 36006.0,
+        "full_sale_days": 539
+      },
+      {
+        "sku": "84270",
+        "description": "ASSTD DESIGN BUBBLE GUM RING",
+        "units_before_cutoff": 20866.0,
+        "sale_days_before_cutoff": 209,
+        "first_sale": "2009-12-01",
+        "last_sale": "2010-12-06",
+        "full_units": 20866.0,
+        "full_sale_days": 209
       },
       {
         "sku": "84992",
         "description": "72 SWEETHEART FAIRY CAKE CASES",
-        "total_units": 26723.0,
-        "sale_days": 497,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "units_before_cutoff": 19603.0,
+        "sale_days_before_cutoff": 316,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 26987.0,
+        "full_sale_days": 499
       },
       {
-        "sku": "21931",
-        "description": "JUMBO STORAGE BAG SUKI",
-        "total_units": 26303.0,
-        "sale_days": 575,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "20725",
+        "description": "LUNCH BAG RED RETROSPOT",
+        "units_before_cutoff": 19396.0,
+        "sale_days_before_cutoff": 354,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 31863.0,
+        "full_sale_days": 592
       },
       {
-        "sku": "47566",
-        "description": "PARTY BUNTING",
-        "total_units": 25992.0,
-        "sale_days": 538,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "71459",
+        "description": "HANGING JAM JAR T-LIGHT HOLDER",
+        "units_before_cutoff": 19069.0,
+        "sale_days_before_cutoff": 254,
+        "first_sale": "2009-12-02",
+        "last_sale": "2011-12-08",
+        "full_units": 29928.0,
+        "full_sale_days": 431
       },
       {
-        "sku": "22492",
-        "description": "MINI PAINT SET VINTAGE",
-        "total_units": 25028.0,
-        "sale_days": 311,
-        "first_sale": "2010-05-06T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "sku": "85099C",
+        "description": "JUMBO  BAG BAROQUE BLACK WHITE",
+        "units_before_cutoff": 18707.0,
+        "sale_days_before_cutoff": 326,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 29244.0,
+        "full_sale_days": 554
       },
       {
-        "sku": "22411",
-        "description": "JUMBO SHOPPER VINTAGE RED PAISLEY",
-        "total_units": 24662.0,
-        "sale_days": 537,
-        "first_sale": "2010-01-29T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "22178",
+        "description": "VICTORIAN GLASS HANGING T-LIGHT",
+        "units_before_cutoff": 18481.0,
+        "sale_days_before_cutoff": 326,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 38707.0,
+        "full_sale_days": 556
       },
       {
-        "sku": "22151",
-        "description": "PLACE SETTING WHITE HEART",
-        "total_units": 24604.0,
-        "sale_days": 382,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "sku": "21985",
+        "description": "PACK OF 12 HEARTS DESIGN TISSUES",
+        "units_before_cutoff": 18367.0,
+        "sale_days_before_cutoff": 267,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 23588.0,
+        "full_sale_days": 434
+      },
+      {
+        "sku": "22386",
+        "description": "JUMBO BAG PINK POLKADOT",
+        "units_before_cutoff": 18092.0,
+        "sale_days_before_cutoff": 305,
+        "first_sale": "2010-01-29",
+        "last_sale": "2011-12-09",
+        "full_units": 34753.0,
+        "full_sale_days": 535
       },
       {
         "sku": "21080",
         "description": "SET/20 RED RETROSPOT PAPER NAPKINS",
-        "total_units": 24399.0,
-        "sale_days": 569,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "units_before_cutoff": 16728.0,
+        "sale_days_before_cutoff": 342,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 24399.0,
+        "full_sale_days": 569
       },
       {
-        "sku": "21790",
-        "description": "VINTAGE SNAP CARDS",
-        "total_units": 24220.0,
-        "sale_days": 553,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-09T00:00:00"
+        "sku": "84970S",
+        "description": "HANGING HEART ZINC T-LIGHT HOLDER",
+        "units_before_cutoff": 16638.0,
+        "sale_days_before_cutoff": 328,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 23413.0,
+        "full_sale_days": 524
       },
       {
-        "sku": "21975",
-        "description": "PACK OF 60 DINOSAUR CAKE CASES",
-        "total_units": 24177.0,
-        "sale_days": 497,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "sku": "21931",
+        "description": "JUMBO STORAGE BAG SUKI",
+        "units_before_cutoff": 16511.0,
+        "sale_days_before_cutoff": 344,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 26915.0,
+        "full_sale_days": 575
       },
       {
         "sku": "21498",
         "description": "RED RETROSPOT WRAP",
-        "total_units": 23676.0,
-        "sale_days": 410,
-        "first_sale": "2009-12-01T00:00:00",
-        "last_sale": "2011-12-08T00:00:00"
+        "units_before_cutoff": 16116.0,
+        "sale_days_before_cutoff": 264,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 23726.0,
+        "full_sale_days": 410
+      },
+      {
+        "sku": "21975",
+        "description": "PACK OF 60 DINOSAUR CAKE CASES",
+        "units_before_cutoff": 15717.0,
+        "sale_days_before_cutoff": 298,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 24201.0,
+        "full_sale_days": 497
+      },
+      {
+        "sku": "22355",
+        "description": "CHARLOTTE BAG SUKI DESIGN",
+        "units_before_cutoff": 15465.0,
+        "sale_days_before_cutoff": 319,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 27917.0,
+        "full_sale_days": 545
+      },
+      {
+        "sku": "22469",
+        "description": "HEART OF WICKER SMALL",
+        "units_before_cutoff": 14895.0,
+        "sale_days_before_cutoff": 219,
+        "first_sale": "2010-04-22",
+        "last_sale": "2011-12-09",
+        "full_units": 26948.0,
+        "full_sale_days": 415
+      },
+      {
+        "sku": "22411",
+        "description": "JUMBO SHOPPER VINTAGE RED PAISLEY",
+        "units_before_cutoff": 14868.0,
+        "sale_days_before_cutoff": 306,
+        "first_sale": "2010-01-29",
+        "last_sale": "2011-12-09",
+        "full_units": 24774.0,
+        "full_sale_days": 538
+      },
+      {
+        "sku": "21915",
+        "description": "RED  HARMONICA IN BOX",
+        "units_before_cutoff": 14792.0,
+        "sale_days_before_cutoff": 190,
+        "first_sale": "2009-12-04",
+        "last_sale": "2011-12-07",
+        "full_units": 29767.0,
+        "full_sale_days": 376
+      },
+      {
+        "sku": "21929",
+        "description": "JUMBO BAG PINK VINTAGE PAISLEY",
+        "units_before_cutoff": 14641.0,
+        "sale_days_before_cutoff": 294,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 22555.0,
+        "full_sale_days": 516
+      },
+      {
+        "sku": "72741",
+        "description": "GRAND CHOCOLATECANDLE",
+        "units_before_cutoff": 14637.0,
+        "sale_days_before_cutoff": 290,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 18561.0,
+        "full_sale_days": 427
+      },
+      {
+        "sku": "21928",
+        "description": "JUMBO BAG SCANDINAVIAN BLUE PAISLEY",
+        "units_before_cutoff": 14185.0,
+        "sale_days_before_cutoff": 301,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 21952.0,
+        "full_sale_days": 515
+      },
+      {
+        "sku": "21231",
+        "description": "SWEETHEART CERAMIC TRINKET BOX",
+        "units_before_cutoff": 14121.0,
+        "sale_days_before_cutoff": 275,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 18152.0,
+        "full_sale_days": 465
+      },
+      {
+        "sku": "22423",
+        "description": "REGENCY CAKESTAND 3 TIER",
+        "units_before_cutoff": 13709.0,
+        "sale_days_before_cutoff": 275,
+        "first_sale": "2010-03-15",
+        "last_sale": "2011-12-09",
+        "full_units": 21531.0,
+        "full_sale_days": 514
+      },
+      {
+        "sku": "20727",
+        "description": "LUNCH BAG  BLACK SKULL.",
+        "units_before_cutoff": 13332.0,
+        "sale_days_before_cutoff": 341,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-09",
+        "full_units": 22838.0,
+        "full_sale_days": 578
+      },
+      {
+        "sku": "22151",
+        "description": "PLACE SETTING WHITE HEART",
+        "units_before_cutoff": 13250.0,
+        "sale_days_before_cutoff": 233,
+        "first_sale": "2009-12-01",
+        "last_sale": "2011-12-08",
+        "full_units": 24628.0,
+        "full_sale_days": 382
       }
     ]
   },
@@ -388,223 +524,475 @@
       "origin": "2011-02-22",
       "n_train": 423920,
       "n_val": 31360,
-      "best_iteration": 50,
-      "wape_lightgbm": 0.8370700793383721,
-      "wape_seasonal_naive_w7": 1.1754392845936616
+      "best_iteration_l1": 59,
+      "best_iteration_tweedie": 32,
+      "wape_lightgbm_l1": 0.809980623861381,
+      "wape_lightgbm_tweedie": 0.9474965690557625,
+      "wape_seasonal_naive_w7": 1.1126736591281408
     },
     {
       "fold": 2,
       "origin": "2011-03-22",
       "n_train": 455280,
       "n_val": 31360,
-      "best_iteration": 72,
-      "wape_lightgbm": 0.8487710928227243,
-      "wape_seasonal_naive_w7": 1.5930230504283318
+      "best_iteration_l1": 122,
+      "best_iteration_tweedie": 48,
+      "wape_lightgbm_l1": 0.8259812740238035,
+      "wape_lightgbm_tweedie": 0.8992223668993738,
+      "wape_seasonal_naive_w7": 1.4746792452830189
     },
     {
       "fold": 3,
       "origin": "2011-04-19",
       "n_train": 486640,
       "n_val": 31360,
-      "best_iteration": 102,
-      "wape_lightgbm": 0.9108179147824088,
-      "wape_seasonal_naive_w7": 1.263073394495413
+      "best_iteration_l1": 89,
+      "best_iteration_tweedie": 43,
+      "wape_lightgbm_l1": 0.9049145579869017,
+      "wape_lightgbm_tweedie": 0.9922967474503498,
+      "wape_seasonal_naive_w7": 1.2372543380308696
     },
     {
       "fold": 4,
       "origin": "2011-05-17",
       "n_train": 518000,
       "n_val": 31360,
-      "best_iteration": 53,
-      "wape_lightgbm": 0.8578657197132487,
-      "wape_seasonal_naive_w7": 1.1737097332871493
+      "best_iteration_l1": 63,
+      "best_iteration_tweedie": 60,
+      "wape_lightgbm_l1": 0.8549066113745702,
+      "wape_lightgbm_tweedie": 0.9585056957317046,
+      "wape_seasonal_naive_w7": 1.1346445063470993
     },
     {
       "fold": 5,
       "origin": "2011-06-14",
       "n_train": 549360,
       "n_val": 31360,
-      "best_iteration": 55,
-      "wape_lightgbm": 0.8613183580600045,
-      "wape_seasonal_naive_w7": 1.1778962272007996
+      "best_iteration_l1": 43,
+      "best_iteration_tweedie": 36,
+      "wape_lightgbm_l1": 0.8544590526537233,
+      "wape_lightgbm_tweedie": 1.0755933748555686,
+      "wape_seasonal_naive_w7": 1.1360154157071016
     },
     {
       "fold": 6,
       "origin": "2011-07-12",
       "n_train": 580720,
       "n_val": 31360,
-      "best_iteration": 208,
-      "wape_lightgbm": 0.8460621516511224,
-      "wape_seasonal_naive_w7": 1.332532318324534
+      "best_iteration_l1": 52,
+      "best_iteration_tweedie": 99,
+      "wape_lightgbm_l1": 0.8113854695124252,
+      "wape_lightgbm_tweedie": 0.8850227684682441,
+      "wape_seasonal_naive_w7": 1.2710888866210839
     },
     {
       "fold": 7,
       "origin": "2011-08-09",
       "n_train": 612080,
       "n_val": 31360,
-      "best_iteration": 58,
-      "wape_lightgbm": 0.8449834058797617,
-      "wape_seasonal_naive_w7": 1.7279972901348954
+      "best_iteration_l1": 91,
+      "best_iteration_tweedie": 50,
+      "wape_lightgbm_l1": 0.8246347230731484,
+      "wape_lightgbm_tweedie": 0.9610219763382999,
+      "wape_seasonal_naive_w7": 1.7016087405368203
     },
     {
       "fold": 8,
       "origin": "2011-09-06",
       "n_train": 643440,
       "n_val": 31360,
-      "best_iteration": 85,
-      "wape_lightgbm": 0.793408443583963,
-      "wape_seasonal_naive_w7": 1.1573107263264706
+      "best_iteration_l1": 181,
+      "best_iteration_tweedie": 86,
+      "wape_lightgbm_l1": 0.787431839417553,
+      "wape_lightgbm_tweedie": 0.8426648856716272,
+      "wape_seasonal_naive_w7": 1.0648165533816516
     },
     {
       "fold": 9,
       "origin": "2011-10-04",
       "n_train": 674800,
       "n_val": 31360,
-      "best_iteration": 114,
-      "wape_lightgbm": 0.8336730380246332,
-      "wape_seasonal_naive_w7": 1.3330740644715235
+      "best_iteration_l1": 89,
+      "best_iteration_tweedie": 80,
+      "wape_lightgbm_l1": 0.8375326611578396,
+      "wape_lightgbm_tweedie": 0.9733104115943718,
+      "wape_seasonal_naive_w7": 1.255964175319014
     },
     {
       "fold": 10,
       "origin": "2011-11-01",
       "n_train": 706160,
       "n_val": 31360,
-      "best_iteration": 47,
-      "wape_lightgbm": 0.7548823318409305,
-      "wape_seasonal_naive_w7": 1.3629501148189769
+      "best_iteration_l1": 53,
+      "best_iteration_tweedie": 83,
+      "wape_lightgbm_l1": 0.7559648146145418,
+      "wape_lightgbm_tweedie": 0.8476176141867731,
+      "wape_seasonal_naive_w7": 1.3641029581252402
     }
   ],
   "feature_importance_mean_gain": [
     {
-      "feature": "seasonal_naive_w7",
-      "mean_gain": 2983472.7833385468
-    },
-    {
+      "model": "lightgbm_tweedie",
       "feature": "target_dow",
-      "mean_gain": 1956278.9056854248
+      "mean_gain": 18533106.328704834
     },
     {
-      "feature": "roll_mean_28",
-      "mean_gain": 923388.4844047546
-    },
-    {
+      "model": "lightgbm_tweedie",
       "feature": "sku",
-      "mean_gain": 754159.4668521881
+      "mean_gain": 10476184.130187988
     },
     {
+      "model": "lightgbm_tweedie",
       "feature": "days_to_christmas",
-      "mean_gain": 716142.3261920928
+      "mean_gain": 4729950.148138428
     },
     {
-      "feature": "target_week",
-      "mean_gain": 197207.72768058776
-    },
-    {
+      "model": "lightgbm_tweedie",
       "feature": "target_day",
-      "mean_gain": 140023.69988746644
+      "mean_gain": 2191527.8821044923
     },
     {
+      "model": "lightgbm_tweedie",
+      "feature": "roll_mean_28",
+      "mean_gain": 1909602.154486084
+    },
+    {
+      "model": "lightgbm_tweedie",
+      "feature": "target_week",
+      "mean_gain": 1498985.3142150878
+    },
+    {
+      "model": "lightgbm_tweedie",
       "feature": "units_same_day_last_year",
-      "mean_gain": 117404.02412109375
+      "mean_gain": 1166456.9441772462
     },
     {
+      "model": "lightgbm_tweedie",
       "feature": "target_is_weekend",
-      "mean_gain": 113199.65370101928
+      "mean_gain": 1123718.343359375
     },
     {
-      "feature": "roll_std_28",
-      "mean_gain": 89543.86825752258
-    },
-    {
+      "model": "lightgbm_tweedie",
       "feature": "history_days",
-      "mean_gain": 46301.645568466185
+      "mean_gain": 698828.4953979492
     },
     {
-      "feature": "roll_mean_7",
-      "mean_gain": 42438.42572517395
+      "model": "lightgbm_tweedie",
+      "feature": "seasonal_naive_w7",
+      "mean_gain": 690788.4309143067
     },
     {
+      "model": "lightgbm_tweedie",
       "feature": "price_asof",
-      "mean_gain": 28784.660634613036
+      "mean_gain": 665900.9353271484
     },
     {
+      "model": "lightgbm_tweedie",
+      "feature": "roll_std_28",
+      "mean_gain": 393004.44423217775
+    },
+    {
+      "model": "lightgbm_tweedie",
       "feature": "target_month",
-      "mean_gain": 21803.945988464355
+      "mean_gain": 329845.70582885743
     },
     {
-      "feature": "units_lag_364",
-      "mean_gain": 8585.134743118286
-    },
-    {
-      "feature": "roll_std_7",
-      "mean_gain": 4960.940148925782
-    },
-    {
+      "model": "lightgbm_tweedie",
       "feature": "level_ratio_7_28",
-      "mean_gain": 4362.0706226348875
+      "mean_gain": 157811.66266479492
     },
     {
+      "model": "lightgbm_tweedie",
+      "feature": "roll_mean_7",
+      "mean_gain": 70237.16915283204
+    },
+    {
+      "model": "lightgbm_tweedie",
+      "feature": "roll_std_7",
+      "mean_gain": 48231.34157104492
+    },
+    {
+      "model": "lightgbm_tweedie",
+      "feature": "units_lag_364",
+      "mean_gain": 47016.60017089844
+    },
+    {
+      "model": "lightgbm_tweedie",
       "feature": "price_ratio",
-      "mean_gain": 3576.588079071045
+      "mean_gain": 34865.003094482425
     },
     {
+      "model": "lightgbm_tweedie",
       "feature": "units_asof",
-      "mean_gain": 138.5431701660156
+      "mean_gain": 2511.0336975097657
     },
     {
-      "feature": "horizon",
-      "mean_gain": 129.99923973083497
-    },
-    {
+      "model": "lightgbm_tweedie",
       "feature": "units_lag_7",
-      "mean_gain": 100.80157012939453
+      "mean_gain": 1055.906005859375
     },
     {
-      "feature": "same_weekday_mean_4",
-      "mean_gain": 6.689029693603516
+      "model": "lightgbm_tweedie",
+      "feature": "horizon",
+      "mean_gain": 738.7780151367188
     },
     {
+      "model": "lightgbm_tweedie",
       "feature": "units_lag_21",
       "mean_gain": 0.0
     },
     {
+      "model": "lightgbm_tweedie",
+      "feature": "units_lag_14",
+      "mean_gain": 0.0
+    },
+    {
+      "model": "lightgbm_tweedie",
       "feature": "units_lag_28",
       "mean_gain": 0.0
     },
     {
+      "model": "lightgbm_tweedie",
+      "feature": "same_weekday_mean_4",
+      "mean_gain": 0.0
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "target_dow",
+      "mean_gain": 2896135.099733734
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "seasonal_naive_w7",
+      "mean_gain": 1795233.002287674
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "sku",
+      "mean_gain": 668917.25756073
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "days_to_christmas",
+      "mean_gain": 607848.1444129944
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "roll_std_28",
+      "mean_gain": 270212.4839076996
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "roll_mean_28",
+      "mean_gain": 265715.515839386
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "target_week",
+      "mean_gain": 259409.03880081177
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "target_day",
+      "mean_gain": 178856.28494796754
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "target_is_weekend",
+      "mean_gain": 162197.73635787965
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "units_same_day_last_year",
+      "mean_gain": 115638.43711700439
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "history_days",
+      "mean_gain": 59370.35082931518
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "target_month",
+      "mean_gain": 33647.945072937015
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "price_asof",
+      "mean_gain": 15635.016358947754
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "roll_mean_7",
+      "mean_gain": 12754.737352371216
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "units_lag_364",
+      "mean_gain": 8291.020704650879
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "level_ratio_7_28",
+      "mean_gain": 3046.225444793701
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "roll_std_7",
+      "mean_gain": 1303.9821907043456
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "price_ratio",
+      "mean_gain": 1048.0774799346923
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "horizon",
+      "mean_gain": 331.6481994628906
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "units_asof",
+      "mean_gain": 157.8699508666992
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "units_lag_7",
+      "mean_gain": 35.08299942016602
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "same_weekday_mean_4",
+      "mean_gain": 11.733000183105469
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "units_lag_21",
+      "mean_gain": 0.0
+    },
+    {
+      "model": "lightgbm_l1",
+      "feature": "units_lag_28",
+      "mean_gain": 0.0
+    },
+    {
+      "model": "lightgbm_l1",
       "feature": "units_lag_14",
       "mean_gain": 0.0
     }
   ],
-  "wape": {
-    "seasonal_naive_w7": 1.3293395012880893,
-    "seasonal_naive_y364": 1.4451681836721177,
-    "moving_average_28": 1.0785372156455162,
-    "lightgbm": 0.8339381814078534
+  "inventory_summary": [
+    {
+      "model": "lightgbm_tweedie",
+      "stockout_to_holding": 3.0,
+      "holding_cost_basis": "origin unit price",
+      "n_sku_origins": 400,
+      "n_missing_price": 0,
+      "actual_units": 512493.0,
+      "forecast_units": 480100.6685137504,
+      "units_short": 107196.7798039261,
+      "units_over": 74804.44831767655,
+      "value_short": 138959.39606128423,
+      "value_over": 123111.67332561854,
+      "cost": 539989.8615094712
+    },
+    {
+      "model": "lightgbm_l1",
+      "stockout_to_holding": 3.0,
+      "holding_cost_basis": "origin unit price",
+      "n_sku_origins": 400,
+      "n_missing_price": 0,
+      "actual_units": 512493.0,
+      "forecast_units": 263703.2148369551,
+      "units_short": 258284.97805340606,
+      "units_over": 9495.192890361206,
+      "value_short": 368180.33334645606,
+      "value_over": 19584.06418730838,
+      "cost": 1124125.0642266767
+    },
+    {
+      "model": "moving_average_28",
+      "stockout_to_holding": 3.0,
+      "holding_cost_basis": "origin unit price",
+      "n_sku_origins": 400,
+      "n_missing_price": 0,
+      "actual_units": 512493.0,
+      "forecast_units": 486746.0,
+      "units_short": 114346.0,
+      "units_over": 88599.0,
+      "value_short": 165569.20128620043,
+      "value_over": 126213.59390370295,
+      "cost": 622921.1977623043
+    }
+  ],
+  "order_winner": "lightgbm_tweedie",
+  "order_wape": {
+    "seasonal_naive_w7": 0.5576915196890494,
+    "seasonal_naive_y364": 0.6462176068746305,
+    "moving_average_28": 0.395995652623548,
+    "lightgbm_l1": 0.5225050311785084,
+    "lightgbm_tweedie": 0.35512919809949145
+  },
+  "order_bias": {
+    "seasonal_naive_w7": 0.05467977123589981,
+    "seasonal_naive_y364": 0.34290419576462505,
+    "moving_average_28": -0.05023873496808737,
+    "lightgbm_l1": -0.4854501137831051,
+    "lightgbm_tweedie": -0.06320541253490207
+  },
+  "daily_wape": {
+    "seasonal_naive_w7": 1.2766593885184774,
+    "seasonal_naive_y364": 1.4583769924662386,
+    "moving_average_28": 1.053000027038697,
+    "lightgbm_l1": 0.8246535982768378,
+    "lightgbm_tweedie": 0.9330688928559817
+  },
+  "daily_bias": {
+    "seasonal_naive_w7": 0.05467977123589981,
+    "seasonal_naive_y364": 0.34290419576462505,
+    "moving_average_28": -0.05023873496808737,
+    "lightgbm_l1": -0.4854501137831051,
+    "lightgbm_tweedie": -0.06320541253490207
+  },
+  "aggregate_wape": {
+    "seasonal_naive_w7": 0.5685170334033831,
+    "seasonal_naive_y364": 0.7253952736915431,
+    "moving_average_28": 0.5887998191473556,
+    "lightgbm_l1": 0.5379625428827585,
+    "lightgbm_tweedie": 0.39376625661333786
   },
   "mae": {
-    "seasonal_naive_w7": 68.09517857142858,
-    "seasonal_naive_y364": 74.02848214285714,
-    "moving_average_28": 55.24787627551021,
-    "lightgbm": 42.71833442508489
+    "seasonal_naive_w7": 58.417767857142856,
+    "seasonal_naive_y364": 66.73285714285714,
+    "moving_average_28": 48.18349489795919,
+    "lightgbm_l1": 37.73474969122245,
+    "lightgbm_tweedie": 42.69564965236077
   },
   "rmse": {
-    "seasonal_naive_w7": 212.58202408549437,
-    "seasonal_naive_y364": 287.4805025997415,
-    "moving_average_28": 142.65190720584246,
-    "lightgbm": 143.69265368148834
+    "seasonal_naive_w7": 193.7640891190699,
+    "seasonal_naive_y364": 228.8160763270673,
+    "moving_average_28": 128.82353009791242,
+    "lightgbm_l1": 129.64833672195837,
+    "lightgbm_tweedie": 125.06268296194601
   },
   "smape": {
-    "seasonal_naive_w7": 0.9699426332110989,
-    "seasonal_naive_y364": 0.9617489987896222,
-    "moving_average_28": 1.2324032851138902,
-    "lightgbm": 1.2273774858287594
+    "seasonal_naive_w7": 0.9649854749656268,
+    "seasonal_naive_y364": 1.0022790397962025,
+    "moving_average_28": 1.1415114655936214,
+    "lightgbm_l1": 1.1773920800235838,
+    "lightgbm_tweedie": 1.1901623596806836
   },
-  "wape_reduction_pct_vs_seasonal_naive_w7": 37.2667267767344,
-  "wape_reduction_pct_vs_seasonal_naive_y364": 42.2947314485676,
-  "wape_reduction_pct_vs_moving_average_28": 22.67877553870662,
-  "headline": "On a 28-day horizon across 10 rolling origins, LightGBM pooled WAPE was 0.833938: 37.27% lower than the weekly seasonal naive (WAPE 1.329340); 42.29% lower than the yearly seasonal naive (WAPE 1.445168); 22.68% lower than the 28-day moving average (WAPE 1.078537).",
-  "mae_line": "Pooled MAE was 42.7183 for LightGBM and 68.0952 for the weekly seasonal naive (37.27% lower). The relative MAE reduction matches the WAPE reduction because both are proportional to total absolute error.",
-  "rmse_line": "Pooled RMSE was 143.6927 for LightGBM, 212.5820 for the weekly seasonal naive, 287.4805 for the yearly seasonal naive, and 142.6519 for the 28-day moving average.",
-  "smape_line": "Pooled sMAPE was 1.227377 for LightGBM, 0.969943 for the weekly seasonal naive, 0.961749 for the yearly seasonal naive, and 1.232403 for the 28-day moving average."
+  "headline": "At the 28-day order quantity (400 SKU-origins across 10 origins), the LightGBM Tweedie has the lowest WAPE, 0.355129, with bias -0.063205.",
+  "paragraphs": [
+    "At the 28-day order quantity (400 SKU-origins across 10 origins), the LightGBM Tweedie has the lowest WAPE, 0.355129, with bias -0.063205.",
+    "LightGBM Tweedie order-quantity WAPE was 0.355129 (bias -0.063205): 10.32% lower than the 28-day moving average (WAPE 0.395996). LightGBM L1, fit on absolute error, had order-quantity WAPE 0.522505 (bias -0.485450).",
+    "Order-quantity bias, (forecast minus actual) / actual, was weekly seasonal naive +0.054680; yearly seasonal naive +0.342904; 28-day moving average -0.050239; LightGBM L1 -0.485450; LightGBM Tweedie -0.063205.",
+    "Summing the assortment before scoring, daily aggregate WAPE was 0.568517 for the weekly seasonal naive; 0.725395 for the yearly seasonal naive; 0.588800 for the 28-day moving average; 0.537963 for the LightGBM L1; 0.393766 for the LightGBM Tweedie.",
+    "On individual SKU-days, Tweedie WAPE was 0.933069 (bias -0.063205) and L1 WAPE was 0.824654 (bias -0.485450), against 1.053000 for the 28-day moving average and 1.276659 for the weekly seasonal naive. The daily score is a shape score; the order quantity above is the replenishment comparison.",
+    "On the weekly track (ISO weeks, horizon 4, 10 origins, 400 SKU-origins), the LightGBM Tweedie has the lowest summed-horizon WAPE. 1-week seasonal naive WAPE 0.612399 (bias -0.033896); 52-week seasonal naive WAPE 0.639445 (bias +0.341604); 4-week moving average WAPE 0.422572 (bias -0.042427); LightGBM Tweedie WAPE 0.399551 (bias -0.003710).",
+    "Pooled daily MAE was 42.6956 for Tweedie, 37.7347 for L1, 48.1835 for the 28-day moving average, 58.4178 for the weekly seasonal naive, and 66.7329 for the yearly seasonal naive. On the same rows, the relative MAE gap equals the relative WAPE gap because both scale with total absolute error.",
+    "Pooled daily RMSE was 125.0627 for Tweedie, 129.6483 for L1, 128.8235 for the 28-day moving average, 193.7641 for the weekly seasonal naive, and 228.8161 for the yearly seasonal naive.",
+    "Pooled daily sMAPE was 1.190162 for Tweedie, 1.177392 for L1, 1.141511 for the 28-day moving average, 0.964985 for the weekly seasonal naive, and 1.002279 for the yearly seasonal naive."
+  ]
 }

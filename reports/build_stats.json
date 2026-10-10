@@ -8,337 +8,448 @@
   "cancel_match_days": 21,
   "horizon": 28,
   "min_history_days": 29,
+  "selection_rule": "Top SKUs by units on dates strictly before the first origin, among SKUs with at least min_sale_days in that window. The cutoff equals min(sale date) + yearly_lag_days + lag_warmup_days + horizon.",
+  "selection_cutoff": "2011-02-22",
   "n_raw_rows": 1044848,
-  "n_clean_lines": 930509,
-  "n_skus_eligible": 936,
+  "n_clean_lines": 931357,
+  "n_sales_lines": 935027,
+  "n_return_lines": 15112,
+  "n_cancel_matches": 3670,
+  "n_skus_eligible_before_cutoff": 430,
   "n_skus_selected": 40,
-  "selected_units": 1585714.0,
-  "all_clean_units": 8919810.0,
-  "selected_unit_share": 0.1777744144774384,
+  "selected_units_before_cutoff": 936678.0,
+  "units_before_cutoff": 5215129.0,
+  "selected_unit_share_before_cutoff": 0.17960782945158213,
+  "selected_units_full_period": 1475728.0,
+  "all_clean_units": 8950843.0,
+  "selected_unit_share_full_period": 0.16487028093331543,
   "date_min": "2009-12-01",
   "date_max": "2011-12-09",
+  "week_min": "2009-11-30",
+  "week_max": "2011-12-05",
   "n_panel_rows": 29560,
   "n_supervised_rows": 780080,
+  "n_weekly_supervised_rows": 15920,
+  "n_weekly_unit_mismatches": 0,
+  "quality": {
+    "n_panel": 29560,
+    "n_panel_keys": 29560,
+    "n_calendar": 739,
+    "calendar_span": 739,
+    "clean_quantity": 8950843.0,
+    "daily_units": 8950843.0,
+    "n_matched_sales": 3670,
+    "n_matched_returns": 3670,
+    "n_matched_sale_ids": 3670,
+    "n_sales_lines": 935027,
+    "n_return_lines": 15112,
+    "n_clean_lines": 931357,
+    "n_bad_asof": 0,
+    "n_selected": 40,
+    "selection_cutoff": "2011-02-22",
+    "n_duplicate_key_rows": 0,
+    "n_match_violations": 0
+  },
   "skus": [
+    {
+      "sku": "85123A",
+      "description": "WHITE HANGING HEART T-LIGHT HOLDER",
+      "units_before_cutoff": 60447.0,
+      "sale_days_before_cutoff": 360,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 83909.0,
+      "full_sale_days": 603
+    },
     {
       "sku": "84077",
       "description": "WORLD WAR 2 GLIDERS ASSTD DESIGNS",
-      "total_units": 96970.0,
-      "sale_days": 447,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "85099B",
-      "description": "JUMBO BAG RED RETROSPOT",
-      "total_units": 86792.0,
-      "sale_days": 585,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "85123A",
-      "description": "CREAM HANGING HEART T-LIGHT HOLDER",
-      "total_units": 83889.0,
-      "sale_days": 603,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "22197",
-      "description": "POPCORN HOLDER",
-      "total_units": 82261.0,
-      "sale_days": 554,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "84879",
-      "description": "ASSORTED COLOUR BIRD ORNAMENT",
-      "total_units": 74031.0,
-      "sale_days": 579,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "units_before_cutoff": 56976.0,
+      "sale_days_before_cutoff": 263,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 97066.0,
+      "full_sale_days": 448
     },
     {
       "sku": "21212",
       "description": "PACK OF 72 RETROSPOT CAKE CASES",
-      "total_units": 70585.0,
-      "sale_days": 586,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "units_before_cutoff": 51436.0,
+      "sale_days_before_cutoff": 348,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 70705.0,
+      "full_sale_days": 586
     },
     {
-      "sku": "17003",
-      "description": "BROCADE RING PURSE",
-      "total_units": 69301.0,
-      "sale_days": 296,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "sku": "85099B",
+      "description": "JUMBO BAG RED RETROSPOT",
+      "units_before_cutoff": 50342.0,
+      "sale_days_before_cutoff": 345,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 87412.0,
+      "full_sale_days": 586
     },
     {
-      "sku": "21977",
-      "description": "PACK OF 60 PINK PAISLEY CAKE CASES",
-      "total_units": 46027.0,
-      "sale_days": 555,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "84879",
+      "description": "ASSORTED COLOUR BIRD ORNAMENT",
+      "units_before_cutoff": 45378.0,
+      "sale_days_before_cutoff": 340,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 74047.0,
+      "full_sale_days": 579
+    },
+    {
+      "sku": "22197",
+      "description": "SMALL POPCORN HOLDER",
+      "units_before_cutoff": 34631.0,
+      "sale_days_before_cutoff": 321,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 82273.0,
+      "full_sale_days": 554
     },
     {
       "sku": "84991",
       "description": "60 TEATIME FAIRY CAKE CASES",
-      "total_units": 41183.0,
-      "sale_days": 551,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "units_before_cutoff": 30017.0,
+      "sale_days_before_cutoff": 342,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 41183.0,
+      "full_sale_days": 551
     },
     {
-      "sku": "15036",
-      "description": "ASSORTED COLOURS SILK FAN",
-      "total_units": 39028.0,
-      "sale_days": 425,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "22178",
-      "description": "VICTORIAN GLASS HANGING T-LIGHT",
-      "total_units": 38707.0,
-      "sale_days": 556,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "22616",
-      "description": "PACK OF 12 LONDON TISSUES",
-      "total_units": 37462.0,
-      "sale_days": 366,
-      "first_sale": "2010-05-06T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "84755",
-      "description": "COLOUR GLASS T-LIGHT HOLDER HANGING",
-      "total_units": 36458.0,
-      "sale_days": 483,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "84946",
-      "description": "ANTIQUE SILVER T-LIGHT GLASS",
-      "total_units": 35934.0,
-      "sale_days": 539,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "21213",
-      "description": "PACK OF 72 SKULL CAKE CASES",
-      "total_units": 34802.0,
-      "sale_days": 529,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "85099F",
-      "description": "JUMBO BAG STRAWBERRY",
-      "total_units": 34464.0,
-      "sale_days": 545,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "sku": "21977",
+      "description": "PACK OF 60 PINK PAISLEY CAKE CASES",
+      "units_before_cutoff": 28390.0,
+      "sale_days_before_cutoff": 335,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 46051.0,
+      "full_sale_days": 555
     },
     {
       "sku": "21232",
-      "description": "STRAWBERRY CERAMIC TRINKET POT",
-      "total_units": 34399.0,
-      "sale_days": 564,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "22386",
-      "description": "JUMBO BAG PINK POLKADOT",
-      "total_units": 34133.0,
-      "sale_days": 535,
-      "first_sale": "2010-01-29T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "84568",
-      "description": "GIRLS ALPHABET IRON ON PATCHES",
-      "total_units": 33897.0,
-      "sale_days": 216,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "22086",
-      "description": "PAPER CHAIN KIT 50'S CHRISTMAS",
-      "total_units": 33551.0,
-      "sale_days": 299,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "20725",
-      "description": "LUNCH BAG RED RETROSPOT",
-      "total_units": 31847.0,
-      "sale_days": 592,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "description": "STRAWBERRY CERAMIC TRINKET BOX",
+      "units_before_cutoff": 26579.0,
+      "sale_days_before_cutoff": 346,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 34400.0,
+      "full_sale_days": 564
     },
     {
       "sku": "21982",
       "description": "PACK OF 12 SUKI TISSUES",
-      "total_units": 31170.0,
-      "sale_days": 355,
-      "first_sale": "2009-12-07T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "units_before_cutoff": 26210.0,
+      "sale_days_before_cutoff": 198,
+      "first_sale": "2009-12-07",
+      "last_sale": "2011-12-09",
+      "full_units": 31170.0,
+      "full_sale_days": 355
     },
     {
-      "sku": "84347",
-      "description": "ROTATING SILVER ANGELS T-LIGHT HLDR",
-      "total_units": 30274.0,
-      "sale_days": 248,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
-    },
-    {
-      "sku": "71459",
-      "description": "HANGING JAM JAR T-LIGHT HOLDERS",
-      "total_units": 29928.0,
-      "sale_days": 431,
-      "first_sale": "2009-12-02T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
-    },
-    {
-      "sku": "21915",
-      "description": "RED  HARMONICA IN BOX",
-      "total_units": 29455.0,
-      "sale_days": 376,
-      "first_sale": "2009-12-04T00:00:00",
-      "last_sale": "2011-12-07T00:00:00"
-    },
-    {
-      "sku": "85099C",
-      "description": "JUMBO  BAG BAROQUE BLACK WHITE",
-      "total_units": 29234.0,
-      "sale_days": 554,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "21213",
+      "description": "PACK OF 72 SKULL CAKE CASES",
+      "units_before_cutoff": 24301.0,
+      "sale_days_before_cutoff": 320,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 34850.0,
+      "full_sale_days": 529
     },
     {
       "sku": "21980",
       "description": "PACK OF 12 RED RETROSPOT TISSUES",
-      "total_units": 27871.0,
-      "sale_days": 363,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "units_before_cutoff": 23869.0,
+      "sale_days_before_cutoff": 233,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 27895.0,
+      "full_sale_days": 363
     },
     {
-      "sku": "22355",
-      "description": "CHARLOTTE BAG SUKI DESIGN",
-      "total_units": 27817.0,
-      "sale_days": 545,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "84755",
+      "description": "COLOUR GLASS T-LIGHT HOLDER HANGING",
+      "units_before_cutoff": 22705.0,
+      "sale_days_before_cutoff": 278,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 36746.0,
+      "full_sale_days": 483
     },
     {
-      "sku": "22952",
-      "description": "60 CAKE CASES VINTAGE CHRISTMAS",
-      "total_units": 27512.0,
-      "sale_days": 215,
-      "first_sale": "2010-09-17T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "15036",
+      "description": "ASSORTED COLOURS SILK FAN",
+      "units_before_cutoff": 21194.0,
+      "sale_days_before_cutoff": 239,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 39028.0,
+      "full_sale_days": 425
     },
     {
-      "sku": "22469",
-      "description": "HEART OF WICKER SMALL",
-      "total_units": 26948.0,
-      "sale_days": 415,
-      "first_sale": "2010-04-22T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "85099F",
+      "description": "JUMBO BAG STRAWBERRY",
+      "units_before_cutoff": 21135.0,
+      "sale_days_before_cutoff": 338,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 34774.0,
+      "full_sale_days": 546
+    },
+    {
+      "sku": "84946",
+      "description": "ANTIQUE SILVER TEA GLASS ETCHED",
+      "units_before_cutoff": 20882.0,
+      "sale_days_before_cutoff": 318,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 36006.0,
+      "full_sale_days": 539
+    },
+    {
+      "sku": "84270",
+      "description": "ASSTD DESIGN BUBBLE GUM RING",
+      "units_before_cutoff": 20866.0,
+      "sale_days_before_cutoff": 209,
+      "first_sale": "2009-12-01",
+      "last_sale": "2010-12-06",
+      "full_units": 20866.0,
+      "full_sale_days": 209
     },
     {
       "sku": "84992",
       "description": "72 SWEETHEART FAIRY CAKE CASES",
-      "total_units": 26723.0,
-      "sale_days": 497,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "units_before_cutoff": 19603.0,
+      "sale_days_before_cutoff": 316,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 26987.0,
+      "full_sale_days": 499
     },
     {
-      "sku": "21931",
-      "description": "JUMBO STORAGE BAG SUKI",
-      "total_units": 26303.0,
-      "sale_days": 575,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "20725",
+      "description": "LUNCH BAG RED RETROSPOT",
+      "units_before_cutoff": 19396.0,
+      "sale_days_before_cutoff": 354,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 31863.0,
+      "full_sale_days": 592
     },
     {
-      "sku": "47566",
-      "description": "PARTY BUNTING",
-      "total_units": 25992.0,
-      "sale_days": 538,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "71459",
+      "description": "HANGING JAM JAR T-LIGHT HOLDER",
+      "units_before_cutoff": 19069.0,
+      "sale_days_before_cutoff": 254,
+      "first_sale": "2009-12-02",
+      "last_sale": "2011-12-08",
+      "full_units": 29928.0,
+      "full_sale_days": 431
     },
     {
-      "sku": "22492",
-      "description": "MINI PAINT SET VINTAGE",
-      "total_units": 25028.0,
-      "sale_days": 311,
-      "first_sale": "2010-05-06T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "sku": "85099C",
+      "description": "JUMBO  BAG BAROQUE BLACK WHITE",
+      "units_before_cutoff": 18707.0,
+      "sale_days_before_cutoff": 326,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 29244.0,
+      "full_sale_days": 554
     },
     {
-      "sku": "22411",
-      "description": "JUMBO SHOPPER VINTAGE RED PAISLEY",
-      "total_units": 24662.0,
-      "sale_days": 537,
-      "first_sale": "2010-01-29T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "22178",
+      "description": "VICTORIAN GLASS HANGING T-LIGHT",
+      "units_before_cutoff": 18481.0,
+      "sale_days_before_cutoff": 326,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 38707.0,
+      "full_sale_days": 556
     },
     {
-      "sku": "22151",
-      "description": "PLACE SETTING WHITE HEART",
-      "total_units": 24604.0,
-      "sale_days": 382,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "sku": "21985",
+      "description": "PACK OF 12 HEARTS DESIGN TISSUES",
+      "units_before_cutoff": 18367.0,
+      "sale_days_before_cutoff": 267,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 23588.0,
+      "full_sale_days": 434
+    },
+    {
+      "sku": "22386",
+      "description": "JUMBO BAG PINK POLKADOT",
+      "units_before_cutoff": 18092.0,
+      "sale_days_before_cutoff": 305,
+      "first_sale": "2010-01-29",
+      "last_sale": "2011-12-09",
+      "full_units": 34753.0,
+      "full_sale_days": 535
     },
     {
       "sku": "21080",
       "description": "SET/20 RED RETROSPOT PAPER NAPKINS",
-      "total_units": 24399.0,
-      "sale_days": 569,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "units_before_cutoff": 16728.0,
+      "sale_days_before_cutoff": 342,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 24399.0,
+      "full_sale_days": 569
     },
     {
-      "sku": "21790",
-      "description": "VINTAGE SNAP CARDS",
-      "total_units": 24220.0,
-      "sale_days": 553,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-09T00:00:00"
+      "sku": "84970S",
+      "description": "HANGING HEART ZINC T-LIGHT HOLDER",
+      "units_before_cutoff": 16638.0,
+      "sale_days_before_cutoff": 328,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 23413.0,
+      "full_sale_days": 524
     },
     {
-      "sku": "21975",
-      "description": "PACK OF 60 DINOSAUR CAKE CASES",
-      "total_units": 24177.0,
-      "sale_days": 497,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "sku": "21931",
+      "description": "JUMBO STORAGE BAG SUKI",
+      "units_before_cutoff": 16511.0,
+      "sale_days_before_cutoff": 344,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 26915.0,
+      "full_sale_days": 575
     },
     {
       "sku": "21498",
       "description": "RED RETROSPOT WRAP",
-      "total_units": 23676.0,
-      "sale_days": 410,
-      "first_sale": "2009-12-01T00:00:00",
-      "last_sale": "2011-12-08T00:00:00"
+      "units_before_cutoff": 16116.0,
+      "sale_days_before_cutoff": 264,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 23726.0,
+      "full_sale_days": 410
+    },
+    {
+      "sku": "21975",
+      "description": "PACK OF 60 DINOSAUR CAKE CASES",
+      "units_before_cutoff": 15717.0,
+      "sale_days_before_cutoff": 298,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 24201.0,
+      "full_sale_days": 497
+    },
+    {
+      "sku": "22355",
+      "description": "CHARLOTTE BAG SUKI DESIGN",
+      "units_before_cutoff": 15465.0,
+      "sale_days_before_cutoff": 319,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 27917.0,
+      "full_sale_days": 545
+    },
+    {
+      "sku": "22469",
+      "description": "HEART OF WICKER SMALL",
+      "units_before_cutoff": 14895.0,
+      "sale_days_before_cutoff": 219,
+      "first_sale": "2010-04-22",
+      "last_sale": "2011-12-09",
+      "full_units": 26948.0,
+      "full_sale_days": 415
+    },
+    {
+      "sku": "22411",
+      "description": "JUMBO SHOPPER VINTAGE RED PAISLEY",
+      "units_before_cutoff": 14868.0,
+      "sale_days_before_cutoff": 306,
+      "first_sale": "2010-01-29",
+      "last_sale": "2011-12-09",
+      "full_units": 24774.0,
+      "full_sale_days": 538
+    },
+    {
+      "sku": "21915",
+      "description": "RED  HARMONICA IN BOX",
+      "units_before_cutoff": 14792.0,
+      "sale_days_before_cutoff": 190,
+      "first_sale": "2009-12-04",
+      "last_sale": "2011-12-07",
+      "full_units": 29767.0,
+      "full_sale_days": 376
+    },
+    {
+      "sku": "21929",
+      "description": "JUMBO BAG PINK VINTAGE PAISLEY",
+      "units_before_cutoff": 14641.0,
+      "sale_days_before_cutoff": 294,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 22555.0,
+      "full_sale_days": 516
+    },
+    {
+      "sku": "72741",
+      "description": "GRAND CHOCOLATECANDLE",
+      "units_before_cutoff": 14637.0,
+      "sale_days_before_cutoff": 290,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 18561.0,
+      "full_sale_days": 427
+    },
+    {
+      "sku": "21928",
+      "description": "JUMBO BAG SCANDINAVIAN BLUE PAISLEY",
+      "units_before_cutoff": 14185.0,
+      "sale_days_before_cutoff": 301,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 21952.0,
+      "full_sale_days": 515
+    },
+    {
+      "sku": "21231",
+      "description": "SWEETHEART CERAMIC TRINKET BOX",
+      "units_before_cutoff": 14121.0,
+      "sale_days_before_cutoff": 275,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 18152.0,
+      "full_sale_days": 465
+    },
+    {
+      "sku": "22423",
+      "description": "REGENCY CAKESTAND 3 TIER",
+      "units_before_cutoff": 13709.0,
+      "sale_days_before_cutoff": 275,
+      "first_sale": "2010-03-15",
+      "last_sale": "2011-12-09",
+      "full_units": 21531.0,
+      "full_sale_days": 514
+    },
+    {
+      "sku": "20727",
+      "description": "LUNCH BAG  BLACK SKULL.",
+      "units_before_cutoff": 13332.0,
+      "sale_days_before_cutoff": 341,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-09",
+      "full_units": 22838.0,
+      "full_sale_days": 578
+    },
+    {
+      "sku": "22151",
+      "description": "PLACE SETTING WHITE HEART",
+      "units_before_cutoff": 13250.0,
+      "sale_days_before_cutoff": 233,
+      "first_sale": "2009-12-01",
+      "last_sale": "2011-12-08",
+      "full_units": 24628.0,
+      "full_sale_days": 382
     }
   ]
 }
