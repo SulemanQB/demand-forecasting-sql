@@ -115,8 +115,11 @@ def _write_parquet(xlsx: Path, dest: Path) -> None:
         _sheet_to_parquet(xlsx, SHEET_EARLY, early_path, early=True)
         _sheet_to_parquet(xlsx, SHEET_LATE, late_path, early=False)
         dest.parent.mkdir(parents=True, exist_ok=True)
+        early_sql = str(early_path).replace("'", "''")
+        late_sql = str(late_path).replace("'", "''")
+        dest_sql = str(dest).replace("'", "''")
         duckdb.execute(
-            """
+            f"""
             COPY (
                 SELECT
                     invoice::VARCHAR AS invoice,
@@ -128,13 +131,12 @@ def _write_parquet(xlsx: Path, dest: Path) -> None:
                     try_cast(customer_id AS BIGINT) AS customer_id,
                     country::VARCHAR AS country
                 FROM (
-                    SELECT * FROM read_parquet(?)
+                    SELECT * FROM read_parquet('{early_sql}')
                     UNION ALL
-                    SELECT * FROM read_parquet(?)
+                    SELECT * FROM read_parquet('{late_sql}')
                 )
-            ) TO ? (FORMAT PARQUET)
-            """,
-            [str(early_path), str(late_path), str(dest)],
+            ) TO '{dest_sql}' (FORMAT PARQUET)
+            """
         )
     finally:
         early_path.unlink(missing_ok=True)

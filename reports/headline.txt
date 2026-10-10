@@ -1,0 +1,4 @@
+On a 28-day horizon across 10 rolling origins, LightGBM pooled WAPE was 0.833938: 37.27% lower than the weekly seasonal naive (WAPE 1.329340); 42.29% lower than the yearly seasonal naive (WAPE 1.445168); 22.68% lower than the 28-day moving average (WAPE 1.078537).
+Pooled MAE was 42.7183 for LightGBM and 68.0952 for the weekly seasonal naive (37.27% lower). The relative MAE reduction matches the WAPE reduction because both are proportional to total absolute error.
+Pooled RMSE was 143.6927 for LightGBM, 212.5820 for the weekly seasonal naive, 287.4805 for the yearly seasonal naive, and 142.6519 for the 28-day moving average.
+Pooled sMAPE was 1.227377 for LightGBM, 0.969943 for the weekly seasonal naive, 0.961749 for the yearly seasonal naive, and 1.232403 for the 28-day moving average.

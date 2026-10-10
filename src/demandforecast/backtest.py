@@ -200,15 +200,15 @@ def run_backtest(cfg: Config | None = None) -> dict:
 
     preds = pd.concat(prediction_frames, ignore_index=True)
     metrics = score_predictions(preds)
-    headline, mae_line, summary = headline_block(metrics, len(origins), cfg.horizon)
-    _log(headline)
-    _log(mae_line)
+    paragraphs, summary = headline_block(metrics, len(origins), cfg.horizon)
+    for paragraph in paragraphs:
+        _log(paragraph)
 
     reports = reports_dir()
     preds.to_csv(reports / "predictions.csv", index=False)
     write_metrics_csv(metrics, reports / "metrics.csv")
-    write_metrics_md(metrics, headline, mae_line, reports / "metrics.md")
-    (reports / "headline.txt").write_text(headline + "\n" + mae_line + "\n", encoding="utf-8")
+    write_metrics_md(metrics, paragraphs, reports / "metrics.md")
+    (reports / "headline.txt").write_text("\n".join(paragraphs) + "\n", encoding="utf-8")
 
     if feature_names is None:
         raise RuntimeError("No model was fit")
