@@ -1,6 +1,6 @@
 # Evaluation note
 
-This note is written from the CSV files in `reports/`. The replenishment comparison is the 28-day total for one SKU at one origin. Daily WAPE is reported beside it as a shape score. Volume quartiles are computed from backtest actuals and are not model features. Demand class uses only history through the origin, starting at the first positive day.
+This note is assembled from the CSV files in `reports/`. The comparison that matters for a replenishment order is the 28-day total for one SKU at one origin. Daily WAPE sits beside it as a shape score. Volume quartiles use backtest actuals and are not model features. Demand class uses only history through the origin, starting at the first positive day. Rates in the sentences match the six-decimal display used in the tables.
 
 At the 28-day order quantity (400 SKU-origins across 10 origins), LightGBM Tweedie WAPE was 0.355129 (bias -0.063205), 10.32% lower than the 28-day moving average (WAPE 0.395996); an origin-cluster 95% interval for the WAPE gap (Tweedie minus the moving average) is [-0.090274, +0.009449] and includes zero; Tweedie was lower on 6 of 10 origins.
 
@@ -204,6 +204,6 @@ The SKU-origin table is `inventory_by_sku_origin.csv`. L1 is the absolute-error 
 
 ## Sample and reconciliation
 
-Selection cutoff 2011-02-22, which is the first daily origin. Ranks use dates strictly before that day. 40 SKUs were taken from 430 with at least 180 sale days in the window. They are 17.96% of units before the cutoff and, as a descriptive full-period share only, 16.49% of cleaned units from 2009-12-01 to 2011-12-09. Examples: 85123A WHITE HANGING HEART T-LIGHT HOLDER (60,447 units before the cutoff, 360 sale days); 84077 WORLD WAR 2 GLIDERS ASSTD DESIGNS (56,976 units before the cutoff, 263 sale days); 21212 PACK OF 72 RETROSPOT CAKE CASES (51,436 units before the cutoff, 348 sale days). Cancellation matches: 3670 (sales lines 935027, clean lines 931357). Clean quantity 8950843 equals daily units 8950843. Panel rows 29560 and distinct keys 29560. Supervised rows with as-of on or after the target: 0. Weekly versus daily unit mismatches: 0.
+Selection cutoff 2011-02-22, the first daily origin. Ranks use dates strictly before that day. 40 SKUs were taken from 430 with at least 180 sale days in the window. They are 17.96% of units before the cutoff. As a descriptive full-period share only, they are 16.49% of cleaned units from 2009-12-01 to 2011-12-09. Examples: 85123A WHITE HANGING HEART T-LIGHT HOLDER (60,447 units before the cutoff, 360 sale days); 84077 WORLD WAR 2 GLIDERS ASSTD DESIGNS (56,976 units before the cutoff, 263 sale days); 21212 PACK OF 72 RETROSPOT CAKE CASES (51,436 units before the cutoff, 348 sale days). Cancellation matches: 3670 (sales lines 935027, clean lines 931357). Clean quantity 8950843 equals daily units 8950843. Panel rows 29560 and distinct keys 29560. Supervised rows with as-of on or after the target: 0. Weekly versus daily unit mismatches: 0.
 
 Charts: `order_wape_by_fold.png` (28-day order-quantity WAPE by origin), `bias.png` (bias by grain, and order-quantity WAPE), `forecast_vs_actual.png`, `wape_by_fold.png`.

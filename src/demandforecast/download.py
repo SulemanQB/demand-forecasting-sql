@@ -77,7 +77,7 @@ def _sha256(path: Path) -> str:
 
 def _download_zip(dest: Path) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
-    request = urllib.request.Request(DATASET_URL, headers={"User-Agent": "demandforecast/1.0"})
+    request = urllib.request.Request(DATASET_URL, headers={"User-Agent": "demand-forecasting-sql/1.0"})
     _log(f"Downloading {DATASET_URL}")
     with urllib.request.urlopen(request, timeout=180) as response, dest.open("wb") as handle:
         shutil.copyfileobj(response, handle)

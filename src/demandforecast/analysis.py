@@ -66,11 +66,12 @@ def _render(
     lines = [
         "# Evaluation note",
         "",
-        "This note is written from the CSV files in `reports/`. "
-        "The replenishment comparison is the 28-day total for one SKU at one origin. "
-        "Daily WAPE is reported beside it as a shape score. "
-        "Volume quartiles are computed from backtest actuals and are not model features. "
-        "Demand class uses only history through the origin, starting at the first positive day.",
+        "This note is assembled from the CSV files in `reports/`. "
+        "The comparison that matters for a replenishment order is the 28-day total for one SKU at one origin. "
+        "Daily WAPE sits beside it as a shape score. "
+        "Volume quartiles use backtest actuals and are not model features. "
+        "Demand class uses only history through the origin, starting at the first positive day. "
+        "Rates in the sentences match the six-decimal display used in the tables.",
         "",
     ]
     if robustness_notes:
@@ -360,12 +361,13 @@ def _sample_paragraph(build_stats: dict, quality: dict) -> str:
         )
     example_text = "; ".join(examples) if examples else "none listed"
     return (
-        f"Selection cutoff {build_stats['selection_cutoff']}, which is the first daily origin. "
+        f"Selection cutoff {build_stats['selection_cutoff']}, the first daily origin. "
         f"Ranks use dates strictly before that day. "
         f"{int(build_stats['n_skus_selected'])} SKUs were taken from "
         f"{int(build_stats['n_skus_eligible_before_cutoff'])} with at least "
         f"{int(build_stats['min_sale_days'])} sale days in the window. "
-        f"They are {share_before:.2%} of units before the cutoff and, as a descriptive full-period share only, "
+        f"They are {share_before:.2%} of units before the cutoff. "
+        f"As a descriptive full-period share only, they are "
         f"{share_full:.2%} of cleaned units from {build_stats['date_min']} to {build_stats['date_max']}. "
         f"Examples: {example_text}. "
         f"Cancellation matches: {int(quality.get('n_matched_sales', 0))} "

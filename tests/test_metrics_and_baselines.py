@@ -417,7 +417,7 @@ def test_committed_metrics_match_predictions():
     assert headline_path.is_file()
     lead = headline_path.read_text(encoding="utf-8").splitlines()[0]
     if "order quantity" not in lead:
-        pytest.skip("headline has not been regenerated")
+        pytest.skip("headline is not the current order-quantity line")
     assert lead in (root / "README.md").read_text(encoding="utf-8")
 
     decision_path = root / "reports" / "decision_metrics.csv"
